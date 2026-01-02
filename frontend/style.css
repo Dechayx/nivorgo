@@ -1,0 +1,157 @@
+body {
+font-family: 'Segoe UI', sans-serif;
+}
+
+
+.navbar {
+background: rgba(0, 60, 30, 0.9);
+}
+
+
+.hero {
+  min-height: 100vh; /* reduced so products are visible sooner */
+  height: auto;
+  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../assets/images/ayurveda.jpg');
+  background-size: cover;
+  background-position: center;
+  color: rgb(212, 30, 30);
+  display: flex;
+  align-items: center;
+  background: #5cd1b4;
+}
+
+
+.section {
+  padding: 80px 0;
+}
+
+/* Make the Products section taller and more prominent */
+#products {
+  padding-top: 120px;
+  padding-bottom: 160px;
+  min-height: 60vh;
+}
+
+@media (max-width: 991px) {
+  #products {
+    padding-top: 80px;
+    padding-bottom: 100px;
+    min-height: auto;
+  }
+}
+
+/* Flip card + product styles */
+.flip-card {
+  perspective: 1000px;
+  cursor: pointer;
+  outline: none;
+  min-height: 320px; /* ensure card container has height so faces don't collapse */
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 320px; /* ensure inner has height so absolutely positioned faces can fill it */
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(.2,.9,.2,1);
+  transform-origin: center center;
+}
+
+/* Flip on hover, focus, or when toggled via .is-flipped */
+.flip-card:hover .flip-card-inner,
+.flip-card:focus-within .flip-card-inner,
+.flip-card.is-flipped .flip-card-inner {
+  transform: rotateX(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  inset: 0;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.flip-card-front {
+  z-index: 2;
+  transform: rotateX(0deg);
+}
+
+.flip-card-back {
+  transform: rotateX(180deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: #fff;
+}
+
+/* Keep Bootstrap .card layout inside faces */
+.flip-card-front .card,
+.flip-card-back .card {
+  height: 100%;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* Image styling */
+.flip-card .product-image {
+  width: 100%;
+  height: 260px;
+  object-fit: cover;
+  display: block;
+}
+
+.price {
+  font-weight: bold;
+  color: green;
+}
+
+/* Product grid layout fixes: make columns stretch and cards fill the column */
+#products .row > [class*="col-"] {
+  display: flex;
+  align-items: stretch;
+}
+
+.flip-card {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.flip-card-inner {
+  min-height: 100%;
+}
+
+.flip-card-front .card-body {
+  flex: 1 1 auto; /* let card body grow so front/back align */
+}
+
+.flip-card-back .card {
+  padding: 1rem;
+}
+
+/* Ensure images keep a consistent height and don't push card size unexpectedly */
+.product-image {
+  height: 260px;
+  object-fit: cover;
+}
+
+/* Small screens: make hero smaller to prioritize content */
+@media (max-width: 767px) {
+  .hero { min-height: 40vh; }
+  .product-image { height: 160px; }
+}
+
+
+#about{
+  background-color: rgb(119, 239, 165);
+}
+
+#xyz{
+  background: #cad2bb;
+ 
+}
