@@ -7,39 +7,6 @@ font-family: 'Segoe UI', sans-serif;
 background: rgba(0, 60, 30, 0.9);
 }
 
-/* Aesop-like minimal centered navbar */
-.custom-navbar{
-  background: transparent;
-  transition: background-color .25s ease, box-shadow .25s ease, color .25s ease;
-}
-.custom-navbar .nav-center .nav-link{
-  color: rgba(255,255,255,0.95);
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  font-weight: 600;
-  font-size: .9rem;
-  padding: .5rem .9rem;
-}
-.custom-navbar .nav-link{ color: rgba(255,255,255,0.95); }
-.custom-navbar.scrolled{ background: rgba(255,255,255,0.98); box-shadow: 0 1px 0 rgba(0,0,0,0.06); }
-.custom-navbar.scrolled .nav-link{ color: #111; }
-/* Ensure brand and icon buttons also turn dark on scroll */
-.custom-navbar.scrolled .navbar-brand{ color: #111; }
-.custom-navbar.scrolled .btn-link{ color: #111; }
-
-/* Search overlay */
-.search-overlay{ position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); z-index: 2000; }
-.search-overlay.active{ display: flex; }
-.overlay-search-input{ width: min(720px, 92%); padding: 1rem 1.25rem; font-size: 1.25rem; border-radius: 6px; border: none; outline: none; }
-.search-overlay .btn-close-white{ position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: #fff; }
-
-/* refinement for badge */
-#cart-count{ font-size: .65rem; transform: translate(.25rem, -.25rem); }
-
-@media (max-width: 576px) {
-  .custom-navbar .nav-center{ display: none; }
-}
-
 
 .hero {
   min-height: 100vh; /* reduced so products are visible sooner */
