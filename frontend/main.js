@@ -32,9 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Fallback static products used if API fails
   const defaultProducts = [
-    { name: 'Keshyadharni Hair Oil', price: 799 },
-    { name: 'Shirodhara Hair Oil', price: 789 },
-    { name: 'Herbal Shampoo', price: 499 }
+    { name: 'Keshyadharni Hair Oil', price: 1609 },
+    { name: 'Shirodhara Hair Oil', price: 1699 },
+    { name: 'Herbal Shampoo', price: 1609 }
   ];
 
   function renderProducts(data){

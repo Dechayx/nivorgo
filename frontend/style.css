@@ -11,13 +11,12 @@ background: rgba(0, 60, 30, 0.9);
 .hero {
   min-height: 100vh; /* reduced so products are visible sooner */
   height: auto;
-  background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('../assets/images/ayurveda.jpg');
-  background-size: cover;
+  background: linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.35)), url('assets/background.jpeg');
+  background-size: 100vh;
   background-position: center;
-  color: rgb(212, 30, 30);
+  color: #fff;
   display: flex;
   align-items: center;
-  background: #5cd1b4;
 }
 
 
@@ -100,7 +99,7 @@ background: rgba(0, 60, 30, 0.9);
 /* Image styling */
 .flip-card .product-image {
   width: 100%;
-  height: 260px;
+  height: 240px;
   object-fit: cover;
   display: block;
 }
