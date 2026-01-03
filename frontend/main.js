@@ -46,6 +46,84 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize cart badge
   try{ setCartCount(getCartCount()); }catch(e){}
 
+  // Counter animation: animate number elements when visible
+  function initCounters(){
+    const els = document.querySelectorAll('.number[data-target]');
+    if(!els.length) return;
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach(entry => {
+        if(!entry.isIntersecting) return;
+        const el = entry.target;
+        const target = parseInt(el.getAttribute('data-target')||'0', 10);
+        const duration = 1200; // ms
+        let start = 0;
+        const stepTime = 30;
+        const increment = Math.max(1, Math.floor(target / (duration / stepTime)));
+        const timer = setInterval(()=>{
+          start += increment;
+          if(start >= target){ el.textContent = String(target); clearInterval(timer); }
+          else el.textContent = String(start);
+        }, stepTime);
+        obs.unobserve(el);
+      });
+    }, { threshold: 0.6 });
+    els.forEach(e => observer.observe(e));
+  }
+
+  // Ribbon-cut reveal overlay for About image
+  function initRibbonReveal(){
+    const wrapper = document.querySelector('.about-image-wrapper');
+    if(!wrapper) return;
+    const ribbon = wrapper.querySelector('.ribbon-overlay');
+    if(!ribbon) return;
+
+    let isDown = false;
+    let startX = 0;
+    let cut = false;
+
+    function doCut(direction){
+      if(cut) return;
+      cut = true;
+      ribbon.classList.add('cut');
+      wrapper.classList.add('revealed');
+      ribbon.setAttribute('aria-hidden','true');
+      ribbon.addEventListener('transitionend', ()=> { try{ ribbon.remove(); }catch(e){} }, { once:true });
+    }
+
+    function onPointerDown(e){
+      isDown = true;
+      startX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+      ribbon.classList.add('active');
+      ribbon.style.transition = 'transform 0.2s linear';
+    }
+    function onPointerMove(e){
+      if(!isDown || cut) return;
+      const x = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0;
+      const dx = x - startX;
+      ribbon.style.transform = `skewX(-15deg) translateX(${dx}px)`;
+      if(Math.abs(dx) > (ribbon.offsetWidth * 0.25)){
+        doCut(dx > 0 ? 'right' : 'left');
+      }
+    }
+    function onPointerUp(){
+      isDown = false;
+      ribbon.classList.remove('active');
+      if(!cut) ribbon.style.transform = '';
+    }
+
+    ribbon.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointermove', onPointerMove);
+    window.addEventListener('pointerup', onPointerUp);
+    ribbon.addEventListener('click', (e)=>{ e.preventDefault(); doCut('right'); });
+    ribbon.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); doCut('right'); }});
+  }
+
+  // initialize ribbon overlay on load
+  initRibbonReveal();
+
+  // also initialize after AOS refresh just in case
+  if(window.AOS && AOS.refresh) AOS.refresh();
+  window.addEventListener('load', ()=> initRibbonReveal());
   // Cart button click (shows simple summary for now)
   const cartBtn = document.getElementById('cart-button');
   if(cartBtn){ cartBtn.addEventListener('click', ()=>{ alert(`You have ${getCartCount()} item(s) in your bag`); }); }
@@ -103,6 +181,9 @@ document.addEventListener('DOMContentLoaded', () => {
         addToBag({ name, price });
       });
     });
+
+    // After products are rendered ensure counters will animate when visible
+    initCounters();
   }
 
   async function loadProducts(showLoading = false){
