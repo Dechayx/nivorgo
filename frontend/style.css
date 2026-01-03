@@ -26,9 +26,12 @@ background: rgba(0, 60, 30, 0.9);
 
 /* Make the Products section taller and more prominent */
 #products {
-  padding-top: 120px;
-  padding-bottom: 160px;
+  padding-top: 50px;
+  padding-bottom: 60px;
   min-height: 60vh;
+  
+}
+#product-list{ background: linear-gradient(135deg, #e1e2e2, #22ac6e);
 }
 
 @media (max-width: 991px) {
@@ -36,6 +39,7 @@ background: rgba(0, 60, 30, 0.9);
     padding-top: 80px;
     padding-bottom: 100px;
     min-height: auto;
+    
   }
 }
 
@@ -145,12 +149,15 @@ background: rgba(0, 60, 30, 0.9);
   .product-image { height: 160px; }
 }
 
+#about-us{
+  padding-top: 20px;
+}
 
 #about{
   background-color: rgb(119, 239, 165);
 }
 
 #xyz{
-  background: #cad2bb;
+  background: linear-gradient(135deg, #50c469, #bbc9b1);
  
 }
