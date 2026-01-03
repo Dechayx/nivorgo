@@ -17,12 +17,11 @@ app.get('/', (req, res) => {
 
 app.get('/products', (req, res) => {
   res.json([
-    { name: 'Keshyadharni Hair Oil', price: 799 },
-    { name: 'Shirodhara Hair Oil', price: 789 },
-      { name: 'Keshyadharni Hair Oil', price: 799 },
-    { name: 'Shirodhara Hair Oil', price: 789 },
-      { name: 'Keshyadharni Hair Oil', price: 799 },
-    { name: 'Shirodhara Hair Oil', price: 789 }
+    { name: 'Keshypushti Hair Oil', price: 1609 },
+    { name: 'Prati Darunaka Hair Oil', price: 1699 },
+      { name: 'Prati Palitya Hair Oil', price: 1699 },
+    { name: 'Shirodhara Hair Oil', price: 1699 },
+      { name: 'Keshyadharni Hair Oil', price: 1609 }
   ]);
 });
 
