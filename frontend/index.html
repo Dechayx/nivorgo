@@ -24,23 +24,42 @@
 
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top">
-<div class="container">
-<a class="navbar-brand" href="#">NIVORGO</a>
-<button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
-<span class="navbar-toggler-icon"></span>
-</button>
-<div class="collapse navbar-collapse" id="menu">
-<ul class="navbar-nav ms-auto">
-<li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-<li class="nav-item"><a class="nav-link" href="#products">Products</a></li>
-<li class="nav-item"><a class="nav-link" href="#why">Why Ayurveda</a></li>
-<li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
+  <div class="container d-flex align-items-center">
+    <a class="navbar-brand me-3" href="#">NIVORGO</a>
 
-</ul>
-</div>
-</div>
+    <!-- Center links on large screens -->
+    <div class="mx-auto d-none d-lg-flex nav-center">
+      <a class="nav-link px-3" href="#about">About</a>
+      <a class="nav-link px-3" href="#products">Products</a>
+      <a class="nav-link px-3" href="#why">Why Ayurveda</a>
+      <a class="nav-link px-3" href="#contact">Contact</a>
+    </div>
+
+    <div class="ms-auto d-flex align-items-center gap-2">
+      <button id="search-open" class="btn btn-link text-light p-2" aria-label="Search">🔍</button>
+      <button id="account-button" class="btn btn-link text-light p-2" aria-label="Account">👤</button>
+      <button id="cart-button" class="btn btn-link position-relative text-light p-2" title="Bag">
+        👜
+        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+      </button>
+      <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </div>
+
+    <!-- Mobile menu (centered when opened) -->
+    
+  </div>
 </nav>
+
+<!-- Search overlay (hidden until opened) -->
+<div id="search-overlay" class="search-overlay" aria-hidden="true">
+  <button class="close btn-close-white" aria-label="Close" id="search-close"></button>
+  <form id="overlay-search-form" class="w-100 d-flex justify-content-center" role="search">
+    <input id="overlay-search-input" class="overlay-search-input" type="search" placeholder="Search products..." aria-label="Search products">
+  </form>
+</div>
 
 
 <!-- HERO SECTION -->
@@ -51,7 +70,6 @@
 <a href="#products" class="btn btn-lg btn-success">Explore Products</a>
 </div>
 </section>
-
 
 <!-- ABOUT -->
 <section id="about" class="section">

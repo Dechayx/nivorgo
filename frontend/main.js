@@ -37,6 +37,20 @@ document.addEventListener('DOMContentLoaded', () => {
     { name: 'Herbal Shampoo', price: 1609 }
   ];
 
+  // Client-side cache and cart helpers
+  let productsCache = null;
+  function getCartCount(){ return parseInt(localStorage.getItem('cartCount')||'0', 10); }
+  function setCartCount(n){ localStorage.setItem('cartCount', String(n)); const el = document.getElementById('cart-count'); if(el) el.textContent = String(n); }
+  function addToBag(item){ const n = getCartCount() + 1; setCartCount(n); console.log('[cart] added', item.name); }
+
+  // Initialize cart badge
+  try{ setCartCount(getCartCount()); }catch(e){}
+
+  // Cart button click (shows simple summary for now)
+  const cartBtn = document.getElementById('cart-button');
+  if(cartBtn){ cartBtn.addEventListener('click', ()=>{ alert(`You have ${getCartCount()} item(s) in your bag`); }); }
+
+
   function renderProducts(data){
     const container = document.getElementById('product-list');
     if(!container) return;
@@ -60,6 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
                   <h5 class="mb-2">Quick Details</h5>
                   <p class="small mb-3">Pure Ayurvedic formula. No chemicals.</p>
                   <a href="#" class="btn btn-success btn-sm">View / Buy</a>
+                  <button class="btn btn-outline-success btn-sm btn-add-to-bag mt-2" data-name="${p.name}" data-price="${p.price}">Add to bag</button>
                 </div>
               </div>
             </div>
@@ -76,6 +91,18 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
     console.log('[products] flip listeners attached to', flipCards.length, 'cards');
+
+    // Attach add-to-bag handlers
+    const addButtons = Array.from(document.querySelectorAll('.btn-add-to-bag'));
+    addButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const name = btn.getAttribute('data-name');
+        const price = parseFloat(btn.getAttribute('data-price')) || 0;
+        addToBag({ name, price });
+      });
+    });
   }
 
   async function loadProducts(showLoading = false){
@@ -92,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setStatus(msg, 'danger', text);
         // show fallback cards so UI is usable
         setStatus('Using fallback products', 'warning', text);
+        productsCache = defaultProducts;
         renderProducts(defaultProducts);
         return;
       }
@@ -102,6 +130,8 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       
+      // cache fetched products for search
+      productsCache = data;
       renderProducts(data);
       if(window.AOS && AOS.refresh) AOS.refresh();
     }catch(err){
@@ -109,6 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
       setStatus('Network error: ' + err.message, 'danger');
       // render fallback products so UI shows cards
       setStatus('Using fallback products', 'warning', err.message);
+      productsCache = defaultProducts;
       renderProducts(defaultProducts);
     }
   }
@@ -125,6 +156,44 @@ document.addEventListener('DOMContentLoaded', () => {
       loadProducts(true, true);
     });
   }
+
+  // Search overlay handling (open overlay, submit to filter products)
+  const searchOpenBtn = document.getElementById('search-open');
+  const searchOverlay = document.getElementById('search-overlay');
+  const overlayForm = document.getElementById('overlay-search-form');
+  const overlayInput = document.getElementById('overlay-search-input');
+  const searchCloseBtn = document.getElementById('search-close');
+
+  if(searchOpenBtn && searchOverlay && overlayInput){
+    searchOpenBtn.addEventListener('click', ()=>{
+      searchOverlay.classList.add('active');
+      overlayInput.focus();
+    });
+    if(searchCloseBtn) searchCloseBtn.addEventListener('click', ()=> searchOverlay.classList.remove('active'));
+    searchOverlay.addEventListener('click', (e)=>{ if(e.target === searchOverlay) searchOverlay.classList.remove('active'); });
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && searchOverlay.classList.contains('active')) searchOverlay.classList.remove('active'); });
+  }
+
+  if(overlayForm){
+    overlayForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const q = overlayInput.value.trim().toLowerCase();
+      searchOverlay.classList.remove('active');
+      if(!q){ if(productsCache) renderProducts(productsCache); return; }
+      if(!productsCache){ // no cached results yet; try loading then filtering
+        loadProducts().then(()=>{ if(productsCache) renderProducts(productsCache.filter(p=>p.name.toLowerCase().includes(q))); });
+        return;
+      }
+      const results = productsCache.filter(p => (p.name || '').toLowerCase().includes(q));
+      renderProducts(results.length ? results : [{ name: 'No results for "' + q + '"', price: 0 }]);
+    });
+  }
+
+  // Navbar scroll behaviour: add .scrolled when page is scrolled down
+  const navbarEl = document.querySelector('.custom-navbar');
+  function updateNavbarScroll(){ if(!navbarEl) return; if(window.scrollY > 40) navbarEl.classList.add('scrolled'); else navbarEl.classList.remove('scrolled'); }
+  window.addEventListener('scroll', updateNavbarScroll);
+  updateNavbarScroll();
 
   // Render fallback immediately so users see products even if API fails
   renderProducts(defaultProducts);
