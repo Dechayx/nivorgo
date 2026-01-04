@@ -1,127 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>NIVORGO | Where Nature Meets Nourishment</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-
-<!-- Bootstrap -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-
-<!-- AOS Animation -->
-<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-
-
-<!-- Custom CSS -->
-<link rel="stylesheet" href="style.css">
-<!-- Swiper CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-
+    <meta charset="UTF-8">
+    <title>NIVORGO | Where Nature Meets Nourishment</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-
-
-
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar">
-  <div class="container d-flex align-items-center">
-    <a class="navbar-brand me-3" href="#">NIVORGO</a>
-
-    <!-- Center links on large screens -->
-    <div class="mx-auto d-none d-lg-flex nav-center">
-      <a class="nav-link px-3" href="#about">About</a>
-      <a class="nav-link px-3" href="#products">Products</a>
-      <a class="nav-link px-3" href="#why">Why Ayurveda</a>
-      <a class="nav-link px-3" href="#contact">Contact</a>
+    <div class="container d-flex align-items-center">
+        <a class="navbar-brand me-3" href="#">NIVORGO</a>
+        <div class="mx-auto d-none d-lg-flex nav-center">
+            <a class="nav-link px-3" href="#about">About</a>
+            <a class="nav-link px-3" href="#products">Products</a>
+            <a class="nav-link px-3" href="#why">Why Ayurveda</a>
+            <a class="nav-link px-3" href="#contact">Contact</a>
+        </div>
+        <div class="ms-auto d-flex align-items-center gap-2">
+            <button id="search-open" class="btn btn-link text-light p-2">🔍</button>
+            <button id="cart-button" class="btn btn-link position-relative text-light p-2">
+                👜 <span id="cart-count" class="badge rounded-pill bg-danger">0</span>
+            </button>
+        </div>
     </div>
-
-    <div class="ms-auto d-flex align-items-center gap-2">
-      <button id="search-open" class="btn btn-link text-light p-2" aria-label="Search">🔍</button>
-      <button id="account-button" class="btn btn-link text-light p-2" aria-label="Account">👤</button>
-      <button id="cart-button" class="btn btn-link position-relative text-light p-2" title="Bag">
-        👜
-        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
-      </button>
-      <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#menu" aria-controls="menu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-    </div>
-
-    <!-- Mobile menu (centered when opened) -->
-    
-  </div>
 </nav>
 
-
-<!-- HERO SECTION -->
 <section class="hero">
-<div class="container text-center" data-aos="fade-up">
-<h1>Pure Ayurveda for Modern Life</h1>
-<p>Healing from roots. No chemicals. No shortcuts.</p>
-<a href="#products" class="btn btn-lg btn-success">Explore Products</a>
-</div>
+    <div class="container text-center" data-aos="fade-up">
+        <p class="hero-sub">Healing from roots. No chemicals.</p>
+        <h1>Pure Ayurveda for<br>Modern Life</h1>
+        <a href="#products" class="btn btn-lg btn-success">Explore Collection</a>
+    </div>
 </section>
 
-
-<!-- ABOUT -->
 <section id="about" class="section">
-<div class="container" data-aos="fade-right">
-<h2>About NIVORGO</h2>
-<p>Nivorgo is India’s first purest therapy brand, born from the vision to bring back the true essence of Ayurveda into modern lifestyle care.
-The name Nivorgo comes from NIV + ORGO = The Purest Foundation of Organic, reflecting our commitment to natural, unpolished, and chemical-free solutions.
-We are more than just a brand – we are a movement towards conscious living, where beauty, health, and nourishment come directly from nature.
-</p>
-</div>
-</section>
-
-<!-- PRODUCTS -->
-<section id="products" class="section bg-light">
-  <div class="container" >
-    <h2 class="text-center" data-aos="zoom-out">Our Hero Products</h2>
-    <div class="product-slider swiper">
-      <div class="swiper-wrapper" id="product-swiper-wrapper">
-        <!-- slides will be injected here by main.js -->
-      </div>
-
-      <!-- navigation / pagination -->
-      <div class="swiper-button-next"></div>
-      <div class="swiper-button-prev"></div>
-      <div class="swiper-pagination"></div>
+    <div class="container">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" data-aos="fade-right">
+                <span class="category-tag">The Standard</span>
+                <h2 class="display-5 font-serif mt-2 mb-4">Ancient Wisdom,<br>Thoughtfully Sourced.</h2>
+                <p class="lead">NIVORGO brings pure, handpicked botanicals to your daily ritual, restoring balance through gentle production.</p>
+                <div class="row mt-4">
+                    <div class="col-6">
+                        <div class="feature-item">🌿 <h6>100% Natural</h6></div>
+                    </div>
+                    <div class="col-6">
+                        <div class="feature-item">🔬 <h6>Clinically Minded</h6></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6" data-aos="zoom-in">
+                <div class="about-image-frame">
+                    <img src="assets/background.jpeg" class="img-fluid rounded" alt="Nivorgo">
+                </div>
+            </div>
+        </div>
     </div>
+</section>
 
-    <noscript>
-      <div class="row mt-4" id="product-list" >
-        <div class="col-12 text-center py-4" >Loading products… (Enable JavaScript to see full experience)</div>
-      </div>
-    </noscript>
-
-    <div class="row mt-3">
-      <div class="col-12 text-center">
-        <button id="load-more" class="btn btn-outline-success" style="display:none;">Load more</button>
-      </div>
+<section id="products" class="section-products">
+    <div class="container">
+        <h2 class="text-center font-serif mb-5" data-aos="fade-up">Our Hero Products</h2>
+        <div class="product-slider swiper">
+            <div class="swiper-wrapper" id="product-swiper-wrapper">
+                </div>
+            <div class="swiper-button-next"></div>
+            <div class="swiper-button-prev"></div>
+            <div class="swiper-pagination"></div>
+        </div>
     </div>
-  </div>
 </section>
 
-<!-- about-us moved to be immediately below the ribbon reveal in the About section -->
-
-<!-- CONTACT -->
-<section id="contact" class="section bg-dark text-light">
-  <div class="container text-center">
-    <h4>Contact</h4>
-    <p>Email: hello@nivorgo.example • Phone: +91 12345 67890</p>
-    <p class="small">© NIVORGO</p>
-  </div>
-</section>
-
-<!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<!-- product loader moved to main.js -->
 <script src="main.js"></script>
 </body>
-</html> 
+</html>
