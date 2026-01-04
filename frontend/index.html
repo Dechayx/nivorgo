@@ -16,6 +16,8 @@
 
 <!-- Custom CSS -->
 <link rel="stylesheet" href="style.css">
+<!-- Swiper CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
 </head>
 <body>
@@ -73,13 +75,69 @@
 
 <!-- ABOUT -->
 <section id="about" class="section">
-<div class="container" data-aos="fade-right">
-<h2>About NIVORGO</h2>
-<p>Nivorgo is India’s first purest therapy brand, born from the vision to bring back the true essence of Ayurveda into modern lifestyle care.
-The name Nivorgo comes from NIV + ORGO = The Purest Foundation of Organic, reflecting our commitment to natural, unpolished, and chemical-free solutions.
-We are more than just a brand – we are a movement towards conscious living, where beauty, health, and nourishment come directly from nature.
-</p>
-</div>
+  <div class="container">
+    <div class="row align-items-center gy-4">
+      <div class="col-lg-6" data-aos="fade-right">
+        <h2 class="animated-heading">About <span>NIVORGO</span></h2>
+        <p class="lead">NIVORGO brings ancient Ayurvedic wisdom to modern life—pure, thoughtfully sourced formulations that restore balance and wellbeing.</p>
+        <p class="muted-lead">From handpicked botanicals to gentle production, everything we do honors tradition while meeting modern quality standards.</p>
+
+        <div class="about-cta mt-3">
+          <a href="#products" class="btn btn-lg btn-success me-2">Shop Essentials</a>
+          <a href="#contact" class="btn btn-outline-light">Get in touch</a>
+        </div>
+
+        <div class="row highlight-cards mt-4 gx-3">
+          <div class="col-6 col-md-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-card">
+              <div class="icon">🌿</div>
+              <div>
+                <h6>100% Natural</h6>
+                <p class="small text-muted mb-0">Only plant-based, responsibly sourced ingredients.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-6 col-md-4" data-aos="fade-up" data-aos-delay="180">
+            <div class="feature-card">
+              <div class="icon">🔬</div>
+              <div>
+                <h6>Clinically Minded</h6>
+                <p class="small text-muted mb-0">Formulations backed by tradition and modern testing.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4 mt-3 mt-md-0" data-aos="fade-up" data-aos-delay="260">
+            <div class="feature-card">
+              <div class="icon">🌱</div>
+              <div>
+                <h6>Sustainable</h6>
+                <p class="small text-muted mb-0">Eco-first packaging and fair sourcing practices.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="col-lg-6" data-aos="fade-left">
+        <div class="about-image-wrapper">
+          <div class="about-image rounded shadow-sm" style="background-image:url('assets/background.jpeg')"></div>
+          <div class="sweeper" aria-hidden="true"></div>
+          <div class="ribbon-overlay" role="button" tabindex="0" aria-label="Cut ribbon to reveal content">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- diagonal SVG divider for a premium section break -->
+    <div class="section-divider-wrap mt-4">
+      <svg class="section-divider" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0 C 600 80 600 -40 1200 0 L1200 60 L0 60 Z" fill="rgba(255,255,255,0.95)"></path>
+      </svg>
+    </div>
+  </div>
 </section>
 
 
@@ -87,10 +145,22 @@ We are more than just a brand – we are a movement towards conscious living, wh
 <section id="products" class="section bg-light">
   <div class="container" >
     <h2 class="text-center" data-aos="zoom-out">Our Hero Products</h2>
-    <div class="row mt-4" id="product-list" >
-      <!-- product cards will be injected by main.js -->
-      <div class="col-12 text-center py-4" >Loading products…</div>
+    <div class="product-slider swiper">
+      <div class="swiper-wrapper" id="product-swiper-wrapper">
+        <!-- slides will be injected here by main.js -->
+      </div>
+
+      <!-- navigation / pagination -->
+      <div class="swiper-button-next"></div>
+      <div class="swiper-button-prev"></div>
+      <div class="swiper-pagination"></div>
     </div>
+
+    <noscript>
+      <div class="row mt-4" id="product-list" >
+        <div class="col-12 text-center py-4" >Loading products… (Enable JavaScript to see full experience)</div>
+      </div>
+    </noscript>
 
     <div class="row mt-3">
       <div class="col-12 text-center">
@@ -133,6 +203,7 @@ We are more than just a brand – we are a movement towards conscious living, wh
 <!-- SCRIPTS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <!-- product loader moved to main.js -->
 <script src="main.js"></script>
 </body>
