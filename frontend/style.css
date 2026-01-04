@@ -7,39 +7,6 @@ font-family: 'Segoe UI', sans-serif;
 background: rgba(0, 60, 30, 0.9);
 }
 
-/* Aesop-like minimal centered navbar */
-.custom-navbar{
-  background: transparent;
-  transition: background-color .25s ease, box-shadow .25s ease, color .25s ease;
-}
-.custom-navbar .nav-center .nav-link{
-  color: rgba(255,255,255,0.95);
-  text-transform: uppercase;
-  letter-spacing: .12em;
-  font-weight: 600;
-  font-size: .9rem;
-  padding: .5rem .9rem;
-}
-.custom-navbar .nav-link{ color: rgba(255,255,255,0.95); }
-.custom-navbar.scrolled{ background: rgba(255,255,255,0.98); box-shadow: 0 1px 0 rgba(0,0,0,0.06); }
-.custom-navbar.scrolled .nav-link{ color: #111; }
-/* Ensure brand and icon buttons also turn dark on scroll */
-.custom-navbar.scrolled .navbar-brand{ color: #111; }
-.custom-navbar.scrolled .btn-link{ color: #111; }
-
-/* Search overlay */
-.search-overlay{ position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.85); z-index: 2000; }
-.search-overlay.active{ display: flex; }
-.overlay-search-input{ width: min(720px, 92%); padding: 1rem 1.25rem; font-size: 1.25rem; border-radius: 6px; border: none; outline: none; }
-.search-overlay .btn-close-white{ position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: #fff; }
-
-/* refinement for badge */
-#cart-count{ font-size: .65rem; transform: translate(.25rem, -.25rem); }
-
-@media (max-width: 576px) {
-  .custom-navbar .nav-center{ display: none; }
-}
-
 
 .hero {
   min-height: 100vh; /* reduced so products are visible sooner */
@@ -268,4 +235,33 @@ background: rgba(0, 60, 30, 0.9);
 #xyz{
   background: linear-gradient(135deg, #50c469, #bbc9b1);
  
+}
+
+/* Enhanced About section */
+.about-section{ padding: 80px 0; }
+.about-section .lead{ font-size: 1.05rem; color: rgba(0,0,0,0.85); }
+.about-values{ display:flex; gap:1rem; margin-top:1rem; flex-wrap:wrap; }
+.value-card{ display:flex; align-items:flex-start; gap:0.75rem; background: rgba(255,255,255,0.8); padding: .75rem 1rem; border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,0.04); }
+.value-card .icon{ font-size: 1.3rem; line-height:1; }
+
+/* Counters */
+.counters{ margin-top: 1rem; }
+.counter .number{ font-size: 1.5rem; font-weight:700; color: #0b2b1b; }
+.counter .label{ font-size: .85rem; color: rgba(0,0,0,0.6); }
+
+.about-image-wrapper{ position: relative; overflow: hidden; }
+.about-image{ width:100%; height:360px; background-size:cover; background-position:center; border-radius:8px; }
+.ribbon-overlay{ position:absolute; left:-10%; top:30%; width:120%; height:22%; background: linear-gradient(90deg,#cc2b2b,#ff6b3d); color:#fff; display:flex; align-items:center; justify-content:center; transform: skewX(-15deg) translateX(0); cursor:grab; border-radius: 6px; box-shadow: 0 8px 20px rgba(0,0,0,0.18); transition: transform .6s cubic-bezier(.2,.9,.2,1), opacity .4s ease; z-index:5; user-select:none; }
+.ribbon-overlay:active{ cursor:grabbing; }
+.ribbon-overlay .ribbon-text{ font-weight:700; pointer-events:none; transform: skewX(15deg); }
+.ribbon-overlay .ribbon-text small{ font-weight:400; display:block; font-size:0.8rem; margin-top:0.25rem; opacity:0.95; }
+.ribbon-overlay.cut{ transform: translateX(120%) skewX(-15deg); opacity:0; }
+.about-image-wrapper.revealed .ribbon-overlay{ opacity:0; pointer-events:none; }
+.about-image-wrapper.revealed .about-image{ filter: none; } /* could add brightness or effect when revealed */
+
+@media (max-width: 767px){
+  .about-image{ height:220px; }
+  .about-values{ justify-content:space-between; }
+  .value-card{ flex:1 1 45%; }
+  .scratch-message{ top:45%; font-size:1rem; }
 }

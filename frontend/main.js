@@ -62,9 +62,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="action-btn cart-btn btn-add-to-bag" data-name="${p.name}" data-price="${p.price}">Add to Cart</button>
               </div>
             </div>
-            <div class="product-info">
-              <h3>${p.name}</h3>
-              <p>${formatPrice(p.price)}</p>
+
+            <!-- BACK -->
+            <div class="flip-card-back">
+              <div class="card h-100 border-0 d-flex flex-column justify-content-center align-items-center">
+                <div class="p-3 text-center">
+                  <h5 class="mb-2">Quick Details</h5>
+                  <p class="small mb-3">Pure Ayurvedic formula. No chemicals.</p>
+                  <a href="#" class="btn btn-success btn-sm">View / Buy</a>
+                  <button class="btn btn-outline-success btn-sm btn-add-to-bag mt-2" data-name="${p.name}" data-price="${p.price}">Add to bag</button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -130,30 +138,88 @@ document.addEventListener('DOMContentLoaded', () => {
     
     try {
       const res = await fetch(apiBase + '/products');
-      if (!res.ok) throw new Error('API unreachable');
+      if(!res.ok){
+        const text = await res.text().catch(()=>res.statusText||'');
+        const msg = `API error: ${res.status} ${res.statusText}`;
+        console.error(msg, text);
+        setStatus(msg, 'danger', text);
+        // show fallback cards so UI is usable
+        setStatus('Using fallback products', 'warning', text);
+        productsCache = defaultProducts;
+        renderProducts(defaultProducts);
+        return;
+      }
       const data = await res.json();
+      if(!Array.isArray(data) || data.length===0){
+        setStatus('No products found', 'warning');
+        renderProducts(defaultProducts);
+        return;
+      }
+      
+      // cache fetched products for search
       productsCache = data;
       renderProducts(data);
-    } catch (err) {
-      console.warn('Using fallback data:', err.message);
+      if(window.AOS && AOS.refresh) AOS.refresh();
+    }catch(err){
+      console.error('Failed to load products', err);
+      setStatus('Network error: ' + err.message, 'danger');
+      // render fallback products so UI shows cards
+      setStatus('Using fallback products', 'warning', err.message);
       productsCache = defaultProducts;
       renderProducts(defaultProducts);
     }
   }
 
-  // --- 5. UI COMPONENTS (Search, Navbar, etc.) ---
-  function initAboutHeading() {
-    const h = document.querySelector('.animated-heading');
-    if (!h) return;
-    h.innerHTML = h.textContent.trim().split(/\s+/).map(w => `<span>${w}</span>`).join(' ');
-    setTimeout(() => h.classList.add('reveal'), 140);
+  // State for pagination
+  let offset = 0;
+  const limit = 3;
+  let total = null;
+
+  // Wire up Load more button
+  const loadMoreBtn = document.getElementById('load-more');
+  if (loadMoreBtn) {
+    loadMoreBtn.addEventListener('click', () => {
+      loadProducts(true, true);
+    });
   }
 
+  // Search overlay handling (open overlay, submit to filter products)
+  const searchOpenBtn = document.getElementById('search-open');
+  const searchOverlay = document.getElementById('search-overlay');
+  const overlayForm = document.getElementById('overlay-search-form');
+  const overlayInput = document.getElementById('overlay-search-input');
+  const searchCloseBtn = document.getElementById('search-close');
+
+  if(searchOpenBtn && searchOverlay && overlayInput){
+    searchOpenBtn.addEventListener('click', ()=>{
+      searchOverlay.classList.add('active');
+      overlayInput.focus();
+    });
+    if(searchCloseBtn) searchCloseBtn.addEventListener('click', ()=> searchOverlay.classList.remove('active'));
+    searchOverlay.addEventListener('click', (e)=>{ if(e.target === searchOverlay) searchOverlay.classList.remove('active'); });
+    document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && searchOverlay.classList.contains('active')) searchOverlay.classList.remove('active'); });
+  }
+
+  if(overlayForm){
+    overlayForm.addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const q = overlayInput.value.trim().toLowerCase();
+      searchOverlay.classList.remove('active');
+      if(!q){ if(productsCache) renderProducts(productsCache); return; }
+      if(!productsCache){ // no cached results yet; try loading then filtering
+        loadProducts().then(()=>{ if(productsCache) renderProducts(productsCache.filter(p=>p.name.toLowerCase().includes(q))); });
+        return;
+      }
+      const results = productsCache.filter(p => (p.name || '').toLowerCase().includes(q));
+      renderProducts(results.length ? results : [{ name: 'No results for "' + q + '"', price: 0 }]);
+    });
+  }
+
+  // Navbar scroll behaviour: add .scrolled when page is scrolled down
   const navbarEl = document.querySelector('.custom-navbar');
-  window.onscroll = () => {
-    if (!navbarEl) return;
-    window.scrollY > 40 ? navbarEl.classList.add('scrolled') : navbarEl.classList.remove('scrolled');
-  };
+  function updateNavbarScroll(){ if(!navbarEl) return; if(window.scrollY > 40) navbarEl.classList.add('scrolled'); else navbarEl.classList.remove('scrolled'); }
+  window.addEventListener('scroll', updateNavbarScroll);
+  updateNavbarScroll();
 
   // --- 6. START ---
   renderProducts(defaultProducts); // Show immediately
