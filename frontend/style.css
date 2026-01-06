@@ -237,3 +237,53 @@ body {
     font-weight: 600;
     letter-spacing: 1px;
 }
+/* --- INTEGRATED FOOTER & CONTACT --- */
+.footer-contact-section {
+    background-color: #f1efeb; /* Slightly darker than the silk bg for contrast */
+    padding: 100px 0 40px 0;
+    color: var(--text-dark);
+}
+
+.footer-form-wrapper {
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.04);
+}
+
+.premium-input {
+    border: none;
+    border-bottom: 1px solid #e0e0e0;
+    border-radius: 0;
+    background: transparent !important;
+    padding: 10px 0;
+    font-size: 0.9rem;
+}
+
+.premium-input:focus {
+    box-shadow: none;
+    border-color: var(--primary-forest);
+}
+
+.category-tag {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+}
+
+.font-serif {
+    font-family: 'Playfair Display', serif;
+}
+
+.letter-spacing-2 { letter-spacing: 2px; }
+
+/* Desktop adjustment to pull the form up slightly */
+@media (min-width: 992px) {
+    .footer-form-wrapper {
+        margin-top: -50px;
+        position: relative;
+        z-index: 5;
+    }
+}

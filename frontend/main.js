@@ -199,4 +199,16 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- 6. START ---
   renderProducts(defaultProducts); 
   loadProducts(); 
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const contactForm = document.getElementById('premium-contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Show premium toast if you have it, else use alert
+            alert("Thank you! Your message has been sent to NIVORGO.");
+            contactForm.reset();
+        });
+    }
+});
 });

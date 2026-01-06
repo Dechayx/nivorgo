@@ -31,5 +31,22 @@ app.get(/.*/, (req, res) => {
 });
 
 
+// This matches the form action="/search" we added above
+app.get('/search', async (req, res) => {
+    const query = req.query.q; // Gets the text user typed
+    
+    // Example: Searching your database (modify for your specific DB logic)
+    // If using MongoDB/Mongoose:
+    const products = await Product.find({ 
+        name: { $regex: query, $options: 'i' } // 'i' makes it case-insensitive
+    });
+
+    // Render your product page with the results
+    res.render('/products', { 
+        products: products, 
+        searchQuery: query 
+    });
+});
+
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
