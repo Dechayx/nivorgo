@@ -198,7 +198,7 @@ body {
 
 /* --- NAVBAR --- */
 .custom-navbar { padding: 20px 0; transition: all 0.4s ease; }
-.custom-navbar.scrolled { background: rgba(255,255,255,0.98); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+.custom-navbar.scrolled { background: rgba(131, 43, 43, 0.98); box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
 .custom-navbar.scrolled .nav-link, .custom-navbar.scrolled .navbar-brand { color: #111 !important; }
 
 /* Buttons */
@@ -286,4 +286,106 @@ body {
         position: relative;
         z-index: 5;
     }
+}
+/* Ensure the container has a defined width and hidden overflow */
+.product-slider {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    position: relative;
+    padding: 20px 0 50px 0; /* Space for pagination dots */
+}
+
+/* Swiper slide must be set to 'height: auto' or '100%' */
+.swiper-slide {
+    height: auto;
+    display: flex;
+    justify-content: center;
+}
+/* --- FIXED NAVBAR BASE --- */
+.custom-navbar { 
+    padding: 25px 0; 
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+    background: transparent;
+}
+
+/* --- SCROLLED STATE (Dark Premium Look) --- */
+.custom-navbar.scrolled { 
+    padding: 15px 0;
+    background: rgba(213, 224, 199, 0.397); /* Using your --primary-forest color */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+}
+
+/* Ensure links stay white on dark background */
+.custom-navbar.scrolled .nav-link, 
+.custom-navbar.scrolled .navbar-brand,
+.custom-navbar.scrolled .btn-link { 
+    color: #0d0808bb !important; 
+}
+.product-actions {
+    position: absolute;
+    bottom: -80px; /* Hide slightly further down */
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column; /* Stacks the buttons */
+    gap: 8px;
+    padding: 0 15px;
+    opacity: 0;
+    transition: all 0.5s ease;
+}
+
+.product-card:hover .product-actions {
+    bottom: 20px;
+    opacity: 1;
+}
+
+.action-btn {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--primary-forest);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.quick-view-btn {
+    background: white;
+    color: var(--primary-forest);
+}
+
+.cart-btn {
+    background: var(--primary-forest);
+    color: white;
+}
+
+/* If you prefer the WHITE navbar on scroll instead, use this: */
+/*
+.custom-navbar.scrolled { 
+    background: rgba(255, 255, 255, 0.98); 
+}
+.custom-navbar.scrolled .nav-link, 
+.custom-navbar.scrolled .navbar-brand { 
+    color: var(--primary-forest) !important; 
+}
+*/
+#quickViewModal .modal-content {
+    background-color: var(--bg-silk);
+}
+
+#quickViewModal .category-tag {
+    color: var(--accent);
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    font-weight: 700;
+}
+
+#quickViewModal img {
+    min-height: 400px;
+}
+
+.object-fit-cover {
+    object-fit: cover;
 }

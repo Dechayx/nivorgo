@@ -1,0 +1,91 @@
+<script>
+    // FUNCTION TO FETCH AND DISPLAY ORDERS
+    async function fetchOrders() {
+        const container = document.getElementById('admin-orders-list');
+        try {
+            // 1. Fetch latest data from server
+            const res = await fetch('/api/admin/orders');
+            const orders = await res.json();
+
+            // --- 2. THE FIX: CLEAR CONTAINER BEFORE RENDERING ---
+            // This prevents orders from stacking on top of old ones
+            container.innerHTML = '';
+
+            if (!orders || orders.length === 0) {
+                container.innerHTML = '<div class="alert alert-info shadow border-0">No orders placed yet.</div>';
+                return;
+            }
+
+            // 3. Map through orders and generate HTML
+            container.innerHTML = orders.map(order => `
+                <div class="card mb-4 shadow border-0 animate-fade-in" id="order-${order._id}">
+                    <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
+                        <div>
+                            <span class="text-muted small">ORDER ID:</span>
+                            <strong class="ms-1">${order._id}</strong>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-success px-3 py-2 text-uppercase">${order.status}</span>
+                            <button class="btn btn-danger btn-sm" onclick="completeOrder('${order._id}')">Complete & Delete</button>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-uppercase small fw-bold text-muted mb-3">Customer Details</h6>
+                                <p class="mb-1"><strong>Name:</strong> ${order.userId ? order.userId.name : 'Guest User'}</p>
+                                <p class="mb-1"><strong>Email:</strong> ${order.userId ? order.userId.email : 'N/A'}</p>
+                                <p class="mb-0 text-muted small">Placed on: ${new Date(order.createdAt).toLocaleString()}</p>
+                            </div>
+                            <div class="col-md-6 border-start">
+                                <h6 class="text-uppercase small fw-bold text-muted mb-3">Shipping Address</h6>
+                                <p class="mb-0 small">${order.shippingAddress.street}</p>
+                                <p class="mb-0 small">${order.shippingAddress.city}, ${order.shippingAddress.state}</p>
+                                <p class="mb-0 small">Zip: ${order.shippingAddress.zipCode}</p>
+                            </div>
+                        </div>
+                        <hr class="my-4">
+                        <h6 class="text-uppercase small fw-bold text-muted mb-3">Products Requested:</h6>
+                        <ul class="list-group list-group-flush mb-3">
+                            ${order.items.map(item => `
+                                <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent border-0">
+                                    <span>✨ ${item.name}</span>
+                                    <span class="fw-bold">₹${item.price}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                        <div class="text-end mt-3">
+                            <h4 class="font-serif fw-bold">Total: ₹${order.totalAmount}</h4>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        } catch (err) {
+            console.error("Fetch Error:", err);
+            container.innerHTML = `<div class="alert alert-danger shadow border-0">Error loading orders.</div>`;
+        }
+    }
+
+    // FUNCTION TO DELETE AN ORDER (Mark as Completed)
+    async function completeOrder(orderId) {
+        if (!confirm("Mark this order as completed and remove from database?")) return;
+
+        try {
+            const res = await fetch('/api/admin/orders/' + orderId, {
+                method: 'DELETE'
+            });
+
+            if (res.ok) {
+                // Refresh the list immediately after deletion
+                fetchOrders();
+            } else {
+                alert("Failed to delete order.");
+            }
+        } catch (err) {
+            alert("Connection error.");
+        }
+    }
+
+    // Run on page load
+    fetchOrders();
+</script>
