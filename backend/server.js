@@ -14,10 +14,17 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
 // --- 2. MONGODB CONNECTION ---
+// --- 2. MONGODB CONNECTION ---
 const dbURI = 'mongodb+srv://Nivorgo_user:kaK7Mn6juueJhjcQ@nivorgo.lergdu3.mongodb.net/?appName=Nivorgo';
-mongoose.connect(dbURI)
+
+mongoose.connect(dbURI, {
+    serverSelectionTimeoutMS: 5000 // Fails faster if the IP is blocked
+})
   .then(() => console.log("🍃 Nivorgo Database Connected & Schema Synced"))
-  .catch(err => console.error("❌ DB Error:", err));
+  .catch(err => {
+    console.error("❌ DB Error: Check your IP Whitelist in MongoDB Atlas!");
+    console.error(err.message);
+  });
 
 // --- 3. MODELS ---
 const UserSchema = new mongoose.Schema({
@@ -133,18 +140,10 @@ app.get('/products', (req, res) => {
 // --- 6. ADMIN API (MUST BE ABOVE NAVIGATION) ---
 app.get('/api/admin/orders', async (req, res) => {
     try {
-        const orders = await Order.find()
-            .populate('userId', 'name email') 
-            .sort({ createdAt: -1 });
-            
-        console.log("✅ Admin data sent");
+        const orders = await Order.find().populate('userId', 'name email').sort({ createdAt: -1 });
         res.status(200).json(orders);
-    } catch (err) {
-        console.error("❌ Admin Route Error:", err);
-        res.status(500).json({ message: "Error fetching orders." });
-    }
+    } catch (err) { res.status(500).json({ message: "Error" }); }
 });
-
 // DELETE ORDER (Mark as Completed/Remove)
 app.delete('/api/admin/orders/:id', async (req, res) => {
     try {
@@ -157,6 +156,9 @@ app.delete('/api/admin/orders/:id', async (req, res) => {
 
 // --- 7. NAVIGATION (ALWAYS LAST) ---
 // This route is a 'catch-all'. If an API isn't found above, it sends the HTML.
+app.get('/admin-portal', (req, res) => {
+    res.sendFile(path.join(__dirname, '..', 'frontend', 'admin.html'));
+});
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });

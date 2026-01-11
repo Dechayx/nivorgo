@@ -108,10 +108,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4. PRODUCT RENDERING ---
     const defaultProducts = [
-        { name: 'Keshyadharni Hair Oil', price: 1609, desc: 'Deeply nourishes scalp.', benefits: ['Prevents hair fall'] },
-        { name: 'Shirodhara Hair Oil', price: 1699, desc: 'Stress relief blend.', benefits: ['Relieves stress'] },
-        { name: 'Pratidarunaka Hair Oil', price: 1609, desc: 'Anti-dandruff formula.', benefits: ['Anti-dandruff'] },
-        { name: 'Ayurvedic Wellness Serum', price: 1850, desc: 'Daily shine serum.', benefits: ['Instant shine'] }
+          { name: 'Keshypushti Hair Oil', price: 1609, desc: 'Deep nourishment.', benefits: ['Volume', 'Vitality'] },
+        { name: 'Prati Darunaka Hair Oil', price: 1699, desc: 'Combats dandruff.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
+        { name: 'Prati Palitya Hair Oil', price: 1699, desc: 'Premature greying care.', benefits: ['Restores Pigment', 'Shine'] },
+        { name: 'Shirodhara Hair Oil', price: 1609, desc: 'Stress relief.', benefits: ['Better Sleep', 'Calming'] },
+        { name: 'Keshyadharni Hair Oil', price: 1609, desc: 'Growth formula.', benefits: ['Strength', 'Reduced Breakage'] }
     ];
 
     function renderProducts(data) {
