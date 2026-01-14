@@ -1,13 +1,27 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const app = express();
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
+// --- VIEW ENGINE SETUP ---
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '..', 'frontend', 'views')); // We will make this folder
 
-const app = express();
+// Route for About Page
+app.get('/about', (req, res) => {
+    res.render('aboutus'); // Looks for about.ejs
+});
+
+// Route for Why Ayurveda Page
+app.get('/why-ayurveda', (req, res) => {
+    res.render('ayurveda'); // Looks for why-ayurveda.ejs
+});
+
+
 
 // --- 1. MIDDLEWARE ---
 app.use(cors());
