@@ -1,8 +1,8 @@
- const apiBase = 'http://localhost:5000';
+const apiBase = 'http://localhost:5000';
+
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[main] NIVORGO Premium Engine Initialized');
 
-   
     // Product Images
     const images = ['assets/1.png', 'assets/2.png', 'assets/3.png', 'assets/4.png', 'assets/5.png'];
 
@@ -17,9 +17,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!userIconBtn) return;
 
         if (name) {
+            // Updated to link to /profile when clicking the name
             userIconBtn.parentElement.innerHTML = `
                 <div class="d-flex align-items-center gap-3 animate-fade-in">
-                  <span class="text-light small fw-bold" style="letter-spacing: 1px;">WELCOME, ${name.toUpperCase()}</span>
+                  <a href="/profile" class="text-light small fw-bold text-decoration-none" style="letter-spacing: 1px; border-bottom: 1px solid transparent;" onmouseover="this.style.borderBottom='1px solid white'" onmouseout="this.style.borderBottom='1px solid transparent'">
+                    WELCOME, ${name.toUpperCase()}
+                  </a>
                   <button id="logout-btn" class="btn btn-sm btn-outline-light px-3" style="font-size: 0.7rem; border-radius: 20px;">LOGOUT</button>
                 </div>
             `;
@@ -30,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- 3. AUTH HANDLERS (OTP & REGISTRATION) ---
+    // --- 3. AUTH HANDLERS ---
     const signupForm = document.getElementById('signupForm');
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
@@ -129,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Toggle logic for Modals
     const toSignup = document.getElementById('to-signup');
     const toLogin = document.getElementById('to-login');
     if(toSignup) toSignup.onclick = (e) => { e.preventDefault(); document.getElementById('login-section').style.display='none'; document.getElementById('otp-section').style.display='none'; document.getElementById('signup-section').style.display='block'; };
@@ -187,18 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('nivorgoCart', JSON.stringify(cart));
         updateCartBadge();
         renderCartWindow();
-        bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('cartOffcanvas')).show();
+        const cartEl = document.getElementById('cartOffcanvas');
+        if (cartEl) bootstrap.Offcanvas.getOrCreateInstance(cartEl).show();
     }
 
-    // --- 5. PRODUCT RENDERING (FIXED QUICK VIEW) ---
-    const defaultProducts = [
-        { name: 'Keshypushti Hair Oil', price: 1609, desc: 'Deep nourishment.', benefits: ['Volume', 'Vitality'] },
-        { name: 'Prati Darunaka Hair Oil', price: 1699, desc: 'Combats dandruff.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
-        { name: 'Prati Palitya Hair Oil', price: 1699, desc: 'Premature greying care.', benefits: ['Restores Pigment', 'Shine'] },
-        { name: 'Shirodhara Hair Oil', price: 1609, desc: 'Stress relief.', benefits: ['Better Sleep', 'Calming'] },
-        { name: 'Keshyadharni Hair Oil', price: 1609, desc: 'Growth formula.', benefits: ['Strength', 'Reduced Breakage'] }
-    ];
-
+    // --- 5. PRODUCT RENDERING (Checks if Wrapper exists) ---
     function renderProducts(data) {
         const wrapper = document.getElementById('product-swiper-wrapper');
         if (!wrapper) return;
@@ -241,38 +238,30 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
         
-        // Attach Cart Listeners
         document.querySelectorAll('.btn-add-to-bag').forEach(btn => {
             btn.onclick = (e) => { e.preventDefault(); addToBag({ name: btn.dataset.name, price: parseFloat(btn.dataset.price) }); };
         });
         
-        // Attach Quick View Listeners
         document.querySelectorAll('.quick-view-btn').forEach(btn => {
             btn.onclick = (e) => {
                 e.preventDefault();
-                
-                // 1. Get Data
                 const name = btn.dataset.name;
                 const price = parseFloat(btn.dataset.price);
                 const desc = btn.dataset.desc;
                 const img = btn.dataset.image;
                 const benefits = btn.dataset.benefits ? btn.dataset.benefits.split(',') : [];
 
-                // 2. Populate Modal
                 document.getElementById('qv-name').textContent = name;
                 document.getElementById('qv-price').textContent = formatPrice(price);
                 document.getElementById('qv-desc').textContent = desc;
                 document.getElementById('qv-image').src = img;
                 
-                // Populate List
                 const benefitsList = document.getElementById('qv-benefits');
                 if (benefitsList) {
                     benefitsList.innerHTML = benefits.map(b => `<li class="mb-2">✨ ${b}</li>`).join('');
                 }
 
-                // 3. Set Add to Cart Button Logic
                 const addBtn = document.getElementById('qv-add-to-cart');
-                // Remove old listeners to prevent duplicates (cloning hack)
                 const newAddBtn = addBtn.cloneNode(true);
                 addBtn.parentNode.replaceChild(newAddBtn, addBtn);
                 
@@ -281,7 +270,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();
                 };
 
-                // 4. Show Modal
                 new bootstrap.Modal(document.getElementById('quickViewModal')).show();
             };
         });
@@ -339,48 +327,115 @@ document.addEventListener('DOMContentLoaded', () => {
                     updateCartBadge();
                     bootstrap.Modal.getInstance(document.getElementById('checkoutModal')).hide();
                     alert("Order Confirmed! 🍃");
-                    window.location.href = "/";
+                    window.location.href = "/profile"; // Redirect to profile to see order
                 } else { alert("Order failed."); }
             } catch (err) { alert("Server error."); }
         });
     }
 
-    // --- STARTUP ---
+    // --- 7. PROFILE PAGE LOGIC (Fills data if on Profile Page) ---
+    const profileNameEl = document.getElementById('profile-name');
+    if (profileNameEl) {
+        const name = localStorage.getItem('userName');
+        const email = localStorage.getItem('userEmail');
+        const address = JSON.parse(localStorage.getItem('userAddress') || '{}');
+
+        if (!name) {
+            window.location.href = "/";
+        } else {
+            profileNameEl.textContent = name;
+            document.getElementById('profile-email').textContent = email;
+            if (address.street) {
+                document.getElementById('profile-address').innerHTML = `
+                    ${address.street}<br>${address.city}, ${address.state} - ${address.zipCode}
+                `;
+            }
+            
+            // Populate Edit Form if fields exist
+            if (document.getElementById('edit-street')) {
+                document.getElementById('edit-street').value = address.street || '';
+                document.getElementById('edit-city').value = address.city || '';
+                document.getElementById('edit-zip').value = address.zipCode || '';
+            }
+        }
+
+        const editForm = document.getElementById('editProfileForm');
+      // Inside main.js
+if (editForm) {
+    editForm.onsubmit = async (e) => {
+        e.preventDefault();
+        
+        const userEmail = localStorage.getItem('userEmail');
+        const newAddress = {
+            street: document.getElementById('edit-street').value,
+            city: document.getElementById('edit-city').value,
+            zipCode: document.getElementById('edit-zip').value,
+            state: "Maharashtra" 
+        };
+
+        try {
+            // URL must match the app.put route in server.js
+            const res = await fetch(`${apiBase}/api/user/update`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: userEmail, address: newAddress })
+            });
+
+            if (res.ok) {
+                const data = await res.json();
+                // 1. Update localStorage so the page reflects changes immediately
+                localStorage.setItem('userAddress', JSON.stringify(data.address));
+                alert("Address saved to your account! 🍃");
+                location.reload();
+            } else {
+                alert("Server found, but update failed.");
+            }
+        } catch (err) {
+            console.error("Connection Error:", err);
+            alert("Could not reach the server. Is it running?");
+        }
+    };
+}
+    }
+
+    // --- 8. STARTUP & GLOBALS ---
     const savedName = localStorage.getItem('userName');
     if (savedName) updateNavbarForUser(savedName);
     updateCartBadge();
-    fetch(`${apiBase}/products`).then(r => r.json()).then(renderProducts).catch(() => renderProducts(defaultProducts));
-    
+
+    // Fetch products only if we are on a page that displays them
+    if (document.getElementById('product-swiper-wrapper')) {
+        const defaultProducts = [
+            { name: 'Keshypushti Hair Oil', price: 1609, desc: 'Deep nourishment.', benefits: ['Volume', 'Vitality'] },
+            { name: 'Prati Darunaka Hair Oil', price: 1699, desc: 'Combats dandruff.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
+            { name: 'Prati Palitya Hair Oil', price: 1699, desc: 'Premature greying care.', benefits: ['Restores Pigment', 'Shine'] },
+            { name: 'Shirodhara Hair Oil', price: 1609, desc: 'Stress relief.', benefits: ['Better Sleep', 'Calming'] },
+            { name: 'Keshyadharni Hair Oil', price: 1609, desc: 'Growth formula.', benefits: ['Strength', 'Reduced Breakage'] }
+        ];
+        fetch(`${apiBase}/products`).then(r => r.json()).then(renderProducts).catch(() => renderProducts(defaultProducts));
+    }
+
+    // Navbar Scroll Effect
     const navbarEl = document.querySelector('.custom-navbar');
     window.addEventListener('scroll', () => {
         if (navbarEl) window.scrollY > 50 ? navbarEl.classList.add('scrolled') : navbarEl.classList.remove('scrolled');
     });
 
-    const cartButton = document.getElementById('cart-button');
-    if (cartButton) {
-        cartButton.onclick = (e) => { e.preventDefault(); renderCartWindow(); bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('cartOffcanvas')).show(); };
-    }
-});
-
-// --- 7. CONTACT FORM LOGIC ---
+    // Contact Form Logic (only if exists)
     const contactForm = document.getElementById('premium-contact-form');
     if (contactForm) {
         contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Stop page reload
-
-            // UI Feedback
+            e.preventDefault();
             const submitBtn = contactForm.querySelector('button[type="submit"]');
             const originalText = submitBtn.textContent; 
             submitBtn.textContent = "Sending...";
             submitBtn.disabled = true;
 
-            // Get values (using QuerySelector since inputs don't have IDs)
             const name = contactForm.querySelector('input[placeholder="Your name"]').value;
             const email = contactForm.querySelector('input[placeholder="Your email"]').value;
             const message = contactForm.querySelector('textarea').value;
 
             try {
-                console.log("mainclear");
                 const res = await fetch(`${apiBase}/contact`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -389,19 +444,110 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (res.ok) {
                     alert("Message sent! We will get back to you soon. 🌿");
-                    contactForm.reset(); // Clear the form
+                    contactForm.reset();
                 } else {
-                    alert("Failed to send message. Please try again.");
+                    alert("Failed to send message.");
                 }
-            } catch (err) {
-                console.error(err);
-                alert("Server error. Please check your connection.");
-            } finally {
-                // Restore button
+            } catch (err) { alert("Server error."); }
+            finally {
                 submitBtn.textContent = originalText;
                 submitBtn.disabled = false;
             }
         });
     }
 
+    // Global Cart Click
+    const cartButton = document.getElementById('cart-button');
+    if (cartButton) {
+        cartButton.onclick = (e) => { 
+            e.preventDefault(); 
+            const cartOffcanvasEl = document.getElementById('cartOffcanvas');
+            if (cartOffcanvasEl) {
+                renderCartWindow(); 
+                bootstrap.Offcanvas.getOrCreateInstance(cartOffcanvasEl).show();
+            } else {
+                // Redirect logic if on a page without a cart offcanvas
+                alert("Redirecting to Home to view your cart...");
+                window.location.href = "/";
+            }
+        };
+    }
+});
+// --- LOAD USER ORDERS ---
+const userEmailForOrders = localStorage.getItem('userEmail');
+const ordersTable = document.getElementById('orders-tbody');
+
+if (ordersTable && userEmailForOrders) {
+    fetch(`${apiBase}/api/user/orders/${userEmailForOrders}`)
+        .then(res => {
+            const contentType = res.headers.get("content-type");
+            if (!contentType || !contentType.includes("application/json")) {
+                throw new TypeError("Oops, server sent HTML. Check route order in server.js");
+            }
+            return res.json();
+        })
+        .then(orders => {
+            if (orders.length === 0) {
+                ordersTable.innerHTML = '<tr><td colspan="5" class="text-center">You haven\'t placed any orders yet.</td></tr>';
+                return;
+            }
+
+            ordersTable.innerHTML = orders.map(order => {
+                // Determine badge color based on status
+                let badgeClass = 'bg-secondary'; // Default
+                if (order.status === 'Pending') badgeClass = 'bg-warning text-dark';
+                if (order.status === 'Completed') badgeClass = 'bg-success';
+
+                return `
+                <tr>
+                    <td class="fw-bold">#${order._id.slice(-6).toUpperCase()}</td>
+                    <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+                    <td>
+                        <span class="badge rounded-pill ${badgeClass}">
+                            ${order.status}
+                        </span>
+                    </td>
+                    <td>₹${order.totalAmount}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-success" onclick='viewOrderItems(${JSON.stringify(order.items)})'>
+                            View Items
+                        </button>
+                    </td>
+                </tr>
+            `}).join('');
+        })
+        .catch(err => {
+            console.error("Order Fetch Error:", err);
+            ordersTable.innerHTML = '<tr><td colspan="5" class="text-center text-danger">Failed to load orders.</td></tr>';
+        });
+}
+// Inside your fetchOrders block in main.js
+ordersTable.innerHTML = orders.map(order => {
+    // 1. Logic to choose badge color
+    let badgeStyle = "bg-warning text-dark"; // Default for 'Pending'
     
+    if (order.status === 'Completed') {
+        badgeStyle = "bg-success text-white";
+    } else if (order.status === 'Cancelled') {
+        badgeStyle = "bg-danger text-white";
+    }
+
+    // 2. Return the row with the dynamic badge
+    return `
+        <tr>
+            <td class="fw-bold">#${order._id.slice(-6).toUpperCase()}</td>
+            <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+            <td>
+                <span class="badge rounded-pill ${badgeStyle}">
+                    ${order.status}
+                </span>
+            </td>
+            <td>₹${order.totalAmount}</td>
+            <td>
+                <button class="btn btn-sm btn-outline-success" onclick='viewOrderItems(${JSON.stringify(order.items)})'>
+                    View Items
+                </button>
+            </td>
+        </tr>
+    `;
+}).join('');

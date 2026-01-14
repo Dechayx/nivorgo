@@ -30,17 +30,25 @@
             <a class="nav-link px-3" href="#contact">Contact</a>
         </div>
         <div class="ms-auto d-flex align-items-center gap-2">
-            <div class="d-flex align-items-center">
-                <form id="search-form" class="d-flex search-container hidden">
-                    <input type="text" id="search-input" class="form-control me-2" placeholder="Search products..." aria-label="Search">
-                </form>
-                <button id="search-open" class="btn btn-link text-light p-2">🔍</button>
-                <button class="btn btn-link text-light p-2" data-bs-toggle="modal" data-bs-target="#authModal" id="user-icon" title="Login or Sign Up">👤</button>
-            </div>
-            <button id="cart-button" class="btn btn-link position-relative text-light p-2">
-                👜 <span id="cart-count" class="badge rounded-pill bg-danger">0</span>
-            </button>
-        </div>
+    <div class="d-flex align-items-center" id="user-nav-wrapper">
+        <form id="search-form" class="d-flex search-container hidden">
+            <input type="text" id="search-input" class="form-control me-2" placeholder="Search products..." aria-label="Search">
+        </form>
+        <button id="search-open" class="btn btn-link text-light p-2">🔍</button>
+        
+        <button class="btn btn-link text-light p-2" 
+                data-bs-toggle="modal" 
+                data-bs-target="#authModal" 
+                id="user-icon" 
+                title="Login or Sign Up">
+            👤
+        </button>
+    </div>
+    
+    <button id="cart-button" class="btn btn-link position-relative text-light p-2">
+        👜 <span id="cart-count" class="badge rounded-pill bg-danger">0</span>
+    </button>
+</div>
     </div>
 </nav>
 
@@ -222,13 +230,18 @@
     const searchBtn = document.getElementById('search-open');
     const searchForm = document.getElementById('search-form');
     const searchInput = document.getElementById('search-input');
-    if (searchBtn) {
+    
+    if (searchBtn && searchForm) {
         searchBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            searchForm.classList.toggle('active');
-            if (searchForm.classList.contains('active')) searchInput.focus();
+            // This matches the .active class in your <style>
+            searchForm.classList.toggle('active'); 
+            if (searchForm.classList.contains('active')) {
+                searchInput.focus();
+            }
         });
     }
+</script>
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

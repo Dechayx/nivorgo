@@ -156,20 +156,26 @@
             }
         }
 
-        async function completeOrder(orderId) {
-            if (!confirm("Mark this order as completed and remove from database?")) return;
-            try {
-                const res = await fetch('/api/admin/orders/' + orderId, { method: 'DELETE' });
-                if (res.ok) {
-                    fetchOrders();
-                } else {
-                    alert("Failed to delete order.");
-                }
-            } catch (err) {
-                alert("Connection error.");
-            }
-        }
+       async function completeOrder(orderId) {
+    if (!confirm("Mark this order as Completed?")) return;
 
+    try {
+        const res = await fetch(`/api/admin/orders/${orderId}`, {
+            method: 'PATCH', // Use PATCH to update, not DELETE
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: 'Completed' })
+        });
+
+        if (res.ok) {
+            alert("Order Status Updated! ✅");
+            fetchOrders(); // Refresh admin list to show updated badge
+        } else {
+            alert("Failed to update status.");
+        }
+    } catch (err) {
+        console.error("Error:", err);
+    }
+}
         fetchOrders();
     </script>
 </body>

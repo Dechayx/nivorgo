@@ -7,23 +7,11 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
-// --- VIEW ENGINE SETUP ---
+
+// --- 1. VIEW ENGINE & MIDDLEWARE ---
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '..', 'frontend', 'views')); // We will make this folder
+app.set('views', path.join(__dirname, '..', 'frontend', 'views'));
 
-// Route for About Page
-app.get('/about', (req, res) => {
-    res.render('aboutus'); // Looks for about.ejs
-});
-
-// Route for Why Ayurveda Page
-app.get('/why-ayurveda', (req, res) => {
-    res.render('ayurveda'); // Looks for why-ayurveda.ejs
-});
-
-
-
-// --- 1. MIDDLEWARE ---
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
@@ -33,7 +21,6 @@ const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'nivorgo@gmail.com', 
-        // Your 16-character App Password
         pass: 'wbtwxmxbfkbdxaee'     
     }
 });
@@ -71,74 +58,40 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 }));
 
 // --- 5. AUTH & OTP ROUTES ---
-
 app.post('/register', async (req, res) => {
     try {
         let { name, email, password } = req.body;
         email = email.toLowerCase();
-
-        // 1. Check if a VERIFIED user already exists
         const existingVerifiedUser = await User.findOne({ email, isVerified: true });
-        if (existingVerifiedUser) {
-            return res.status(400).json({ message: "Email already registered. Please Login." });
-        }
+        if (existingVerifiedUser) return res.status(400).json({ message: "Email already registered." });
 
-        // 2. CLEANUP: Delete any unverified user with this email 
         await User.deleteOne({ email, isVerified: false });
-
         const hashedPassword = await bcrypt.hash(password, 10);
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-        const newUser = new User({ 
-            name, email, password: hashedPassword, otp, isVerified: false 
-        });
-
+        const newUser = new User({ name, email, password: hashedPassword, otp, isVerified: false });
         await newUser.save();
 
-        // 3. Send Email
-        try {
-            await transporter.sendMail({
-                from: '"Nivorgo Ayurveda" <nivorgo@gmail.com>',
-                to: email,
-                subject: 'Verify your Nivorgo Account',
-                html: `
-                    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd;">
-                        <h2 style="color: #4A5D45;">Welcome to Nivorgo</h2>
-                        <p>Your verification code is:</p>
-                        <h1 style="color: #B4846C; letter-spacing: 2px;">${otp}</h1>
-                        <p>This code is valid for 10 minutes.</p>
-                    </div>
-                `
-            });
-            console.log("✅ Email sent successfully to:", email);
-            res.status(201).json({ message: "OTP sent to email!" });
-
-        } catch (mailErr) {
-            await User.deleteOne({ email }); 
-            console.error("❌ NODEMAILER ERROR:", mailErr.message);
-            res.status(500).json({ message: "Email failed. Check server logs." });
-        }
-
-    } catch (err) {
-        console.error("❌ Database/Server Error:", err);
-        res.status(500).json({ message: "Registration error." });
-    }
+        await transporter.sendMail({
+            from: '"Nivorgo Ayurveda" <nivorgo@gmail.com>',
+            to: email,
+            subject: 'Verify your Nivorgo Account',
+            html: `<div style="font-family: Arial; padding: 20px;"><h2>Your OTP is: ${otp}</h2></div>`
+        });
+        res.status(201).json({ message: "OTP sent!" });
+    } catch (err) { res.status(500).json({ message: "Registration error." }); }
 });
 
 app.post('/verify-otp', async (req, res) => {
     try {
         const { email, otp } = req.body;
         const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user) return res.status(404).json({ message: "User not found." });
-
-        if (user.otp === otp) {
+        if (user && user.otp === otp) {
             user.isVerified = true;
             user.otp = undefined; 
             await user.save();
             res.status(200).json({ message: "Verified successfully!" });
-        } else {
-            res.status(400).json({ message: "Invalid OTP." });
-        }
+        } else { res.status(400).json({ message: "Invalid OTP." }); }
     } catch (err) { res.status(500).json({ message: "Verification failed." }); }
 });
 
@@ -146,92 +99,133 @@ app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email: email.toLowerCase() });
-        
-        if (!user) return res.status(400).json({ message: "User not found." });
-        if (!user.isVerified) return res.status(401).json({ message: "Please verify your email first." });
+        if (!user || !user.isVerified) return res.status(401).json({ message: "User not verified." });
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Incorrect password." });
 
-        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET || 'secret', { expiresIn: '24h' });
-        res.status(200).json({ token, user: { name: user.name, email: user.email, cart: user.cart, address: user.address } });
+        const token = jwt.sign({ id: user._id }, 'secret', { expiresIn: '24h' });
+        res.json({ token, user: { name: user.name, email: user.email, address: user.address, cart: user.cart } });
     } catch (err) { res.status(500).json({ message: "Login error." }); }
 });
 
-// --- 6. PRODUCT ROUTE (ADDED BACK) ---
-app.get('/products', (req, res) => {
-    const products = [
-        { name: 'Keshypushti Hair Oil', price: 1609, desc: 'Deep nourishment.', benefits: ['Volume', 'Vitality'] },
-        { name: 'Prati Darunaka Hair Oil', price: 1699, desc: 'Combats dandruff.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
-        { name: 'Prati Palitya Hair Oil', price: 1699, desc: 'Premature greying care.', benefits: ['Restores Pigment', 'Shine'] },
-        { name: 'Shirodhara Hair Oil', price: 1609, desc: 'Stress relief.', benefits: ['Better Sleep', 'Calming'] },
-        { name: 'Keshyadharni Hair Oil', price: 1609, desc: 'Growth formula.', benefits: ['Strength', 'Reduced Breakage'] }
-    ];
-    res.json(products);
-});
-
-// --- 7. ORDER & ADMIN ROUTES ---
-app.post('/place-order', async (req, res) => {
+// --- 6. USER DATA & PROFILE API ---
+app.get('/api/user/orders/:email', async (req, res) => {
     try {
-        const { email, items, total, address } = req.body;
-        const user = await User.findOne({ email: email.toLowerCase() });
-        const newOrder = new Order({ userId: user._id, items, totalAmount: total, shippingAddress: address });
-        await newOrder.save();
-        await User.findOneAndUpdate({ email: email.toLowerCase() }, { $set: { cart: [], address: address } });
-        res.status(201).json({ message: "Order placed!" });
-    } catch (err) { res.status(500).json({ message: "Order failed." }); }
-});
-
-app.get('/api/admin/orders', async (req, res) => {
-    try {
-        const orders = await Order.find().populate('userId', 'name email').sort({ createdAt: -1 });
+        const user = await User.findOne({ email: req.params.email.toLowerCase() });
+        if (!user) return res.status(404).json({ message: "User not found" });
+        const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
         res.json(orders);
     } catch (err) { res.status(500).json({ message: "Error fetching orders" }); }
 });
 
-app.delete('/api/admin/orders/:id', async (req, res) => {
+app.put('/api/user/update', async (req, res) => {
     try {
-        await Order.findByIdAndDelete(req.params.id);
-        res.json({ message: "Deleted" });
-    } catch (err) { res.status(500).json({ message: "Error deleting order" }); }
+        const { email, address } = req.body;
+        const updatedUser = await User.findOneAndUpdate(
+            { email: email.toLowerCase() },
+            { $set: { address: address } },
+            { new: true }
+        );
+        console.log(`✅ Profile Updated: ${email}`);
+        res.json({ message: "Success", address: updatedUser.address });
+    } catch (err) { res.status(500).json({ message: "Update failed" }); }
 });
 
+// --- 7. ADMIN API ROUTES ---
+app.get('/api/admin/orders', async (req, res) => {
+    try {
+        // Populates name/email from User model for the Admin Dashboard
+        const orders = await Order.find().populate('userId', 'name email').sort({ createdAt: -1 });
+        res.json(orders);
+    } catch (err) { res.status(500).json({ message: "Error fetching admin orders" }); }
+});
+
+// Change from app.delete to app.patch
+// --- ADMIN: Update Order Status ---
+app.patch('/api/admin/orders/:id', async (req, res) => {
+    try {
+        const { status } = req.body; // Expecting { "status": "Completed" }
+        
+        const updatedOrder = await Order.findByIdAndUpdate(
+            req.params.id,
+            { $set: { status: status } }, 
+            { new: true }
+        );
+
+        if (!updatedOrder) return res.status(404).json({ message: "Order not found" });
+
+        res.json({ message: "Order updated successfully", order: updatedOrder });
+    } catch (err) {
+        res.status(500).json({ message: "Server error during update" });
+    }
+});
+// --- 8. PRODUCT & ORDER ROUTES ---
+app.get('/products', (req, res) => {
+    const products = [
+        { name: 'Keshypushti Hair Oil', price: 1609 },
+        { name: 'Prati Darunaka Hair Oil', price: 1699 },
+        { name: 'Prati Palitya Hair Oil', price: 1699 },
+        { name: 'Shirodhara Hair Oil', price: 1609 },
+        { name: 'Keshyadharni Hair Oil', price: 1609 }
+    ];
+    res.json(products);
+});
+
+app.post('/place-order', async (req, res) => {
+    try {
+        const { email, items, total, address } = req.body;
+        const user = await User.findOne({ email: email.toLowerCase() });
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        const newOrder = new Order({ 
+            userId: user._id, 
+            items, 
+            totalAmount: total, 
+            shippingAddress: address 
+        });
+        
+        await newOrder.save();
+        
+        // Also update the user's default address and clear cart
+        await User.findOneAndUpdate(
+            { email: email.toLowerCase() }, 
+            { $set: { cart: [], address: address } }
+        );
+
+        res.status(201).json({ message: "Order placed successfully" });
+    } catch (err) { res.status(500).json({ message: "Order failed" }); }
+});
+
+// --- 9. CONTACT FORM ---
+app.post('/contact', async (req, res) => {
+    const { name, email, message } = req.body;
+    try {
+        await transporter.sendMail({
+            from: '"Nivorgo Website" <nivorgo@gmail.com>',
+            to: 'nivorgo@gmail.com',
+            subject: `🌿 Inquiry from ${name}`,
+            html: `<h3>New Message</h3><p><b>From:</b> ${name} (${email})</p><p><b>Message:</b> ${message}</p>`
+        });
+        res.json({ message: "Sent!" });
+    } catch (err) { res.status(500).json({ message: "Error" }); }
+});
+
+// --- 10. PAGE RENDERING ROUTES ---
+app.get('/about', (req, res) => res.render('aboutus'));
+app.get('/why-ayurveda', (req, res) => res.render('ayurveda'));
+app.get('/profile', (req, res) => res.render('profile'));
+
+// Protected Admin Portal
 app.get('/admin-portal', (req, res) => {
+    // Optional: Add a password check via query param like /admin-portal?pass=123
     res.sendFile(path.join(__dirname, '..', 'frontend', 'admin.html'));
 });
+
+// --- 11. THE CATCH-ALL (MUST BE LAST) ---
 
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
-// --- 8. CONTACT FORM ROUTE ---
-app.post('/contact', async (req, res) => {
-    const { name, email, message } = req.body;
-    try {
-      
-        await transporter.sendMail({
-            from: '"Nivorgo Website" <nivorgo@gmail.com>', // Sender (Must be your authenticated email)
-            to: 'nivorgo@gmail.com', // Recipient (Where YOU want to receive the inquiries)
-            replyTo: email, // This lets you simply hit "Reply" to email the customer back
-            subject: `🌿 New Inquiry from ${name}`,
-            html: `
-                <div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-                    <h2 style="color: #4A5D45;">New Customer Message</h2>
-                    <p><strong>Name:</strong> ${name}</p>
-                    <p><strong>Email:</strong> ${email}</p>
-                    <hr>
-                    <p><strong>Message:</strong></p>
-                    <blockquote style="background: #f9f9f9; padding: 15px; border-left: 4px solid #4A5D45;">
-                        ${message}
-                    </blockquote>
-                </div>
-            `
-        });
-        console.log("✅ Contact message sent from:", email);
-        res.json({ message: "Message sent successfully!" });
 
-    } catch (err) {
-        console.error("❌ Contact Email Error:", err);
-        res.status(500).json({ message: "Failed to send message." });
-    }
-});
 app.listen(5000, () => console.log(`🚀 Server on http://localhost:5000`));
