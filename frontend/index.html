@@ -10,6 +10,13 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     <link rel="stylesheet" href="style.css">
+    
+    <style>
+        .search-container { width: 0; overflow: hidden; transition: width 0.4s ease-in-out; opacity: 0; }
+        .search-container.active { width: 250px; opacity: 1; }
+        #qv-benefits li { margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .modal.fade .modal-dialog { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    </style>
 </head>
 <body>
 
@@ -24,60 +31,12 @@
         </div>
         <div class="ms-auto d-flex align-items-center gap-2">
             <div class="d-flex align-items-center">
-    
-    <form id="search-form" action="/search" method="GET" class="d-flex search-container hidden">
-        <input 
-            type="text" 
-            name="q" 
-            class="form-control me-2" 
-            placeholder="Search products..." 
-            aria-label="Search"
-            id="search-input"
-        >
-    </form>
-
-    <button id="search-open" class="btn btn-link text-light p-2">
-        🔍
-    </button>
-  
-    <button class="btn btn-link text-light p-2" data-bs-toggle="modal" data-bs-target="#authModal" id="user-icon" title="Login or Sign Up">
-    👤
-</button>
-</div>
-
-<style>
-    /* Start with width 0 and hidden to create animation effect */
-    .search-container {
-        width: 0;
-        overflow: hidden;
-        transition: width 0.4s ease-in-out;
-        opacity: 0;
-    }
-
-    /* The class javascript will add to show it */
-    .search-container.active {
-        width: 250px; /* Adjust width as needed */
-        opacity: 1;
-    }
-</style>
-
-<script>
-    const searchBtn = document.getElementById('search-open');
-    const searchForm = document.getElementById('search-form');
-    const searchInput = document.getElementById('search-input');
-
-    searchBtn.addEventListener('click', (e) => {
-        e.preventDefault(); // Stop button from submitting normally
-        
-        // Toggle the 'active' class to show/hide input
-        searchForm.classList.toggle('active');
-        
-        // If opening, focus the cursor inside automatically
-        if (searchForm.classList.contains('active')) {
-            searchInput.focus();
-        }
-    });
-</script>
+                <form id="search-form" class="d-flex search-container hidden">
+                    <input type="text" id="search-input" class="form-control me-2" placeholder="Search products..." aria-label="Search">
+                </form>
+                <button id="search-open" class="btn btn-link text-light p-2">🔍</button>
+                <button class="btn btn-link text-light p-2" data-bs-toggle="modal" data-bs-target="#authModal" id="user-icon" title="Login or Sign Up">👤</button>
+            </div>
             <button id="cart-button" class="btn btn-link position-relative text-light p-2">
                 👜 <span id="cart-count" class="badge rounded-pill bg-danger">0</span>
             </button>
@@ -101,12 +60,8 @@
                 <h2 class="display-5 font-serif mt-2 mb-4">Ancient Wisdom,<br>Thoughtfully Sourced.</h2>
                 <p class="lead">NIVORGO brings pure, handpicked botanicals to your daily ritual, restoring balance through gentle production.</p>
                 <div class="row mt-4">
-                    <div class="col-6">
-                        <div class="feature-item">🌿 <h6>100% Natural</h6></div>
-                    </div>
-                    <div class="col-6">
-                        <div class="feature-item">🔬 <h6>Clinically Minded</h6></div>
-                    </div>
+                    <div class="col-6"><div class="feature-item">🌿 <h6>100% Natural</h6></div></div>
+                    <div class="col-6"><div class="feature-item">🔬 <h6>Clinically Minded</h6></div></div>
                 </div>
             </div>
             <div class="col-lg-6" data-aos="zoom-in">
@@ -122,8 +77,7 @@
     <div class="container">
         <h2 class="text-center font-serif mb-5" data-aos="fade-up">Our Hero Products</h2>
         <div class="product-slider swiper">
-            <div class="swiper-wrapper" id="product-swiper-wrapper">
-                </div>
+            <div class="swiper-wrapper" id="product-swiper-wrapper"></div>
             <div class="swiper-button-next"></div>
             <div class="swiper-button-prev"></div>
             <div class="swiper-pagination"></div>
@@ -131,67 +85,35 @@
     </div>
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="main.js"></script>
-
 <footer id="contact" class="footer-contact-section">
     <div class="container">
         <div class="row g-5">
-            
             <div class="col-lg-4" data-aos="fade-up">
                 <h2 class="navbar-brand font-serif mb-4" style="font-size: 2rem;">NIVORGO</h2>
                 <p class="text-muted pe-lg-5 mb-5">Bringing ancient Ayurvedic wisdom to your modern ritual. Pure, potent, and thoughtfully sourced.</p>
-                
                 <div class="contact-details mt-4">
-                    <div class="d-flex mb-3">
-                        <span class="me-3">📍</span>
-                        <p class="small mb-0">Pune, Maharashtra, India</p>
-                    </div>
-                    <div class="d-flex mb-3">
-                        <span class="me-3">✉️</span>
-                        <p class="small mb-0">hello@nivorgo.com</p>
-                    </div>
-                    <div class="d-flex mb-3">
-                        <span class="me-3">📞</span>
-                        <p class="small mb-0">+91 98332 89760</p>
-                    </div>
+                    <div class="d-flex mb-3"><span class="me-3">📍</span><p class="small mb-0">Pune, Maharashtra, India</p></div>
+                    <div class="d-flex mb-3"><span class="me-3">✉️</span><p class="small mb-0">hello@nivorgo.com</p></div>
+                    <div class="d-flex mb-3"><span class="me-3">📞</span><p class="small mb-0">+91 98332 89760</p></div>
                 </div>
             </div>
-
             <div class="col-lg-8" data-aos="fade-up" data-aos-delay="200">
                 <div class="footer-form-wrapper p-4 p-md-5">
                     <span class="category-tag mb-2">Connect with us</span>
                     <h3 class="font-serif mb-4">Have a question?</h3>
-                    
                     <form id="premium-contact-form">
                         <div class="row g-4">
-                            <div class="col-md-6">
-                                <label class="form-label">Name</label>
-                                <input type="text" class="form-control premium-input" placeholder="Your name" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Email</label>
-                                <input type="email" class="form-control premium-input" placeholder="Your email" required>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Message</label>
-                                <textarea class="form-control premium-input" rows="2" placeholder="Tell us what's on your mind..." required></textarea>
-                            </div>
-                            <div class="col-12 text-end">
-                                <button type="submit" class="btn btn-success px-5">Send Message</button>
-                            </div>
+                            <div class="col-md-6"><label class="form-label">Name</label><input type="text" class="form-control premium-input" placeholder="Your name" required></div>
+                            <div class="col-md-6"><label class="form-label">Email</label><input type="email" class="form-control premium-input" placeholder="Your email" required></div>
+                            <div class="col-12"><label class="form-label">Message</label><textarea class="form-control premium-input" rows="2" placeholder="Tell us what's on your mind..." required></textarea></div>
+                            <div class="col-12 text-end"><button type="submit" class="btn btn-success px-5">Send Message</button></div>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
-
         <div class="row mt-5 pt-4 border-top">
-            <div class="col-md-6 text-center text-md-start">
-                <p class="small text-muted">© 2026 NIVORGO. All Rights Reserved.</p>
-            </div>
+            <div class="col-md-6 text-center text-md-start"><p class="small text-muted">© 2026 NIVORGO. All Rights Reserved.</p></div>
             <div class="col-md-6 text-center text-md-end">
                 <div class="social-links">
                     <a href="#" class="text-muted me-3 small text-decoration-none">Instagram</a>
@@ -201,93 +123,34 @@
             </div>
         </div>
     </div>
-
-
 </footer>
-<div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-body p-5">
-                
-                <div id="login-section">
-                    <h3 class="font-serif text-center mb-4">Login to Nivorgo</h3>
-                    <form id="loginForm">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Email Address</label>
-                            <input type="email" id="loginEmail" class="form-control premium-input" required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold">Password</label>
-                            <input type="password" id="loginPassword" class="form-control premium-input" required>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100 py-2">Sign In</button>
-                    </form>
-                    <p class="text-center mt-4 small text-muted">
-                        New to Nivorgo? <a href="#" id="to-signup" class="text-success fw-bold">Create Account</a>
-                    </p>
-                </div>
 
-                <div id="signup-section" style="display: none;">
-                    <h3 class="font-serif text-center mb-4">Join Nivorgo</h3>
-                    <form id="signupForm">
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Full Name</label>
-                            <input type="text" id="signupName" class="form-control premium-input" required>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label small fw-bold">Email Address</label>
-                            <input type="email" id="signupEmail" class="form-control premium-input" required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold">Create Password</label>
-                            <input type="password" id="signupPassword" class="form-control premium-input" required>
-                        </div>
-                        <button type="submit" class="btn btn-success w-100 py-2">Register</button>
-                    </form>
-                    <p class="text-center mt-4 small text-muted">
-                        Already have an account? <a href="#" id="to-login" class="text-success fw-bold">Sign In</a>
-                    </p>
-                </div>
-
-            </div>
-        </div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel" style="background-color: #F9F7F2; width: 400px;">
+    <div class="offcanvas-header border-bottom p-4">
+        <h5 class="font-serif mb-0" id="cartOffcanvasLabel">Your Collection</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body p-4" id="cart-items-container"></div>
+    <div class="offcanvas-footer p-4 border-top">
+        <div class="d-flex justify-content-between mb-3"><span class="text-muted">Subtotal</span><strong id="cart-total-price">₹0</strong></div>
+        <button class="btn btn-success w-100 py-3" id="checkout-btn" onclick="openCheckout()">PROCEED TO CHECKOUT</button>
     </div>
 </div>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="main.js"></script>
+
 <div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="background-color: #F9F7F2;">
             <div class="modal-body p-0">
                 <button type="button" class="btn-close position-absolute top-0 end-0 m-3 z-3" data-bs-dismiss="modal" aria-label="Close"></button>
-                
                 <div class="row g-0">
-                    <div class="col-md-6">
-                        <div class="qv-image-container h-100" style="background: #EBE8E2;">
-                            <img id="qv-image" src="" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 450px;" alt="Product">
-                        </div>
-                    </div>
-
+                    <div class="col-md-6"><div class="qv-image-container h-100" style="background: #EBE8E2;"><img id="qv-image" src="" class="img-fluid w-100 h-100" style="object-fit: cover; min-height: 450px;" alt="Product"></div></div>
                     <div class="col-md-6 p-4 p-lg-5 d-flex flex-column justify-content-center">
                         <span class="category-tag mb-2" style="color: #B4846C; font-size: 0.7rem; letter-spacing: 3px; font-weight: 700;">AUTHENTIC AYURVEDA</span>
-                        
                         <h2 id="qv-name" class="font-serif mb-2" style="font-size: 2rem;">Product Name</h2>
                         <h4 id="qv-price" class="price-tag mb-4" style="color: #B4846C; font-weight: 600;">₹0.00</h4>
-                        
-                        <p id="qv-desc" class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.6;">
-                            Detailed product description will be injected here.
-                        </p>
-
-                        <div class="benefits-wrapper mb-5">
-                            <h6 class="small fw-bold text-uppercase mb-3" style="letter-spacing: 1px;">Key Benefits:</h6>
-                            <ul id="qv-benefits" class="list-unstyled small">
-                                </ul>
-                        </div>
-
-                        <button id="qv-add-to-cart" class="btn btn-success w-100 py-3 text-uppercase fw-bold" style="letter-spacing: 2px; border-radius: 0;">
-                            Add to Collection
-                        </button>
+                        <p id="qv-desc" class="text-muted mb-4" style="font-size: 0.95rem; line-height: 1.6;">Description.</p>
+                        <div class="benefits-wrapper mb-5"><h6 class="small fw-bold text-uppercase mb-3" style="letter-spacing: 1px;">Key Benefits:</h6><ul id="qv-benefits" class="list-unstyled small"></ul></div>
+                        <button id="qv-add-to-cart" class="btn btn-success w-100 py-3 text-uppercase fw-bold" style="letter-spacing: 2px; border-radius: 0;">Add to Collection</button>
                     </div>
                 </div>
             </div>
@@ -295,20 +158,6 @@
     </div>
 </div>
 
-<style>
-    /* Styling for the list icons injected via JS */
-    #qv-benefits li {
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-
-    /* Modal transition tweak */
-    .modal.fade .modal-dialog {
-        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-</style>
 <div class="modal fade" id="checkoutModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg p-4">
@@ -320,33 +169,70 @@
                     <div class="col-6"><input type="text" id="ship-zip" class="form-control mb-3" placeholder="Zip Code" required></div>
                 </div>
                 <input type="text" id="ship-state" class="form-control mb-4" placeholder="State" required>
-                
-                <div class="d-flex justify-content-between mb-4">
-                    <span>Total Amount:</span>
-                    <strong id="checkout-total">₹0.00</strong>
-                </div>
-                
+                <div class="d-flex justify-content-between mb-4"><span>Total Amount:</span><strong id="checkout-total">₹0.00</strong></div>
                 <button type="submit" class="btn btn-success w-100 py-3">PLACE ORDER</button>
             </form>
         </div>
     </div>
 </div>
-<div class="offcanvas offcanvas-end" tabindex="-1" id="cartOffcanvas" aria-labelledby="cartOffcanvasLabel" style="background-color: #F9F7F2; width: 400px;">
-    <div class="offcanvas-header border-bottom p-4">
-        <h5 class="font-serif mb-0" id="cartOffcanvasLabel">Your Collection</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    
-    <div class="offcanvas-body p-4" id="cart-items-container">
-        </div>
 
-    <div class="offcanvas-footer p-4 border-top">
-        <div class="d-flex justify-content-between mb-3">
-            <span class="text-muted">Subtotal</span>
-            <strong id="cart-total-price">₹0</strong>
+<div class="modal fade" id="authModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-body p-5">
+                
+                <div id="login-section">
+                    <h3 class="font-serif text-center mb-4">Login to Nivorgo</h3>
+                    <form id="loginForm">
+                        <div class="mb-3"><label class="form-label small fw-bold">Email Address</label><input type="email" id="loginEmail" class="form-control premium-input" required></div>
+                        <div class="mb-4"><label class="form-label small fw-bold">Password</label><input type="password" id="loginPassword" class="form-control premium-input" required></div>
+                        <button type="submit" class="btn btn-success w-100 py-2">Sign In</button>
+                    </form>
+                    <p class="text-center mt-4 small text-muted">New to Nivorgo? <a href="#" id="to-signup" class="text-success fw-bold">Create Account</a></p>
+                </div>
+
+                <div id="signup-section" style="display: none;">
+                    <h3 class="font-serif text-center mb-4">Join Nivorgo</h3>
+                    <form id="signupForm">
+                        <div class="mb-3"><label class="form-label small fw-bold">Full Name</label><input type="text" id="signupName" class="form-control premium-input" required></div>
+                        <div class="mb-3"><label class="form-label small fw-bold">Email Address</label><input type="email" id="signupEmail" class="form-control premium-input" required></div>
+                        <div class="mb-4"><label class="form-label small fw-bold">Create Password</label><input type="password" id="signupPassword" class="form-control premium-input" required></div>
+                        <button type="submit" class="btn btn-success w-100 py-2">Register</button>
+                    </form>
+                    <p class="text-center mt-4 small text-muted">Already have an account? <a href="#" id="to-login" class="text-success fw-bold">Sign In</a></p>
+                </div>
+
+                <div id="otp-section" style="display: none;">
+                    <h3 class="font-serif text-center mb-2">Verify Email</h3>
+                    <p class="text-center text-muted small mb-4">We've sent a 6-digit code to your email.</p>
+                    <div class="mb-4">
+                        <input type="text" id="otpInput" class="form-control premium-input text-center fw-bold" placeholder="000000" maxlength="6" style="letter-spacing: 10px; font-size: 1.5rem;">
+                    </div>
+                    <button onclick="verifyOTP()" class="btn btn-success w-100 py-2">Verify & Register</button>
+                    <p class="text-center mt-4 small text-muted">Incorrect email? <a href="#" onclick="location.reload()" class="text-success">Try Again</a></p>
+                </div>
+
+            </div>
         </div>
-        <button class="btn btn-success w-100 py-3" id="checkout-btn" onclick="openCheckout()">PROCEED TO CHECKOUT</button>
     </div>
 </div>
+
+<script>
+    // Search Toggle Logic
+    const searchBtn = document.getElementById('search-open');
+    const searchForm = document.getElementById('search-form');
+    const searchInput = document.getElementById('search-input');
+    if (searchBtn) {
+        searchBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchForm.classList.toggle('active');
+            if (searchForm.classList.contains('active')) searchInput.focus();
+        });
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script src="main.js"></script>
 </body>
 </html>

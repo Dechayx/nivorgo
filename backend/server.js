@@ -4,6 +4,7 @@ const cors = require('cors');
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
@@ -13,24 +14,29 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '..', 'frontend')));
 
-// --- 2. MONGODB CONNECTION ---
-// --- 2. MONGODB CONNECTION ---
+// --- 2. EMAIL CONFIGURATION ---
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'prathmeshghuse4@gmail.com', 
+        // Your 16-character App Password
+        pass: 'jbgkpfwdujizxguv'     
+    }
+});
+
+// --- 3. MONGODB CONNECTION ---
 const dbURI = 'mongodb+srv://Nivorgo_user:kaK7Mn6juueJhjcQ@nivorgo.lergdu3.mongodb.net/?appName=Nivorgo';
+mongoose.connect(dbURI)
+  .then(() => console.log("🍃 Nivorgo Database Connected"))
+  .catch(err => console.error("❌ DB Error:", err));
 
-mongoose.connect(dbURI, {
-    serverSelectionTimeoutMS: 5000 // Fails faster if the IP is blocked
-})
-  .then(() => console.log("🍃 Nivorgo Database Connected & Schema Synced"))
-  .catch(err => {
-    console.error("❌ DB Error: Check your IP Whitelist in MongoDB Atlas!");
-    console.error(err.message);
-  });
-
-// --- 3. MODELS ---
+// --- 4. MODELS ---
 const UserSchema = new mongoose.Schema({
     name: { type: String, required: true },
     email: { type: String, unique: true, required: true },
     password: { type: String, required: true },
+    isVerified: { type: Boolean, default: false },
+    otp: { type: String },
     address: {
         street: { type: String, default: "" },
         city: { type: String, default: "" },
@@ -50,29 +56,85 @@ const Order = mongoose.model('Order', new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 }));
 
-// --- 4. AUTH ROUTES ---
+// --- 5. AUTH & OTP ROUTES ---
 
-// REGISTER
 app.post('/register', async (req, res) => {
     try {
         let { name, email, password } = req.body;
         email = email.toLowerCase();
-        const existingUser = await User.findOne({ email });
-        if (existingUser) return res.status(400).json({ message: "Email already exists." });
+
+        // 1. Check if a VERIFIED user already exists
+        const existingVerifiedUser = await User.findOne({ email, isVerified: true });
+        if (existingVerifiedUser) {
+            return res.status(400).json({ message: "Email already registered. Please Login." });
+        }
+
+        // 2. CLEANUP: Delete any unverified user with this email 
+        await User.deleteOne({ email, isVerified: false });
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        const newUser = new User({ name, email, password: hashedPassword });
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        const newUser = new User({ 
+            name, email, password: hashedPassword, otp, isVerified: false 
+        });
+
         await newUser.save();
-        res.status(201).json({ message: "User created!" });
-    } catch (err) { res.status(500).json({ message: "Registration error." }); }
+
+        // 3. Send Email
+        try {
+            await transporter.sendMail({
+                from: '"Nivorgo Ayurveda" <prathmeshghuse4@gmail.com>',
+                to: email,
+                subject: 'Verify your Nivorgo Account',
+                html: `
+                    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #ddd;">
+                        <h2 style="color: #4A5D45;">Welcome to Nivorgo</h2>
+                        <p>Your verification code is:</p>
+                        <h1 style="color: #B4846C; letter-spacing: 2px;">${otp}</h1>
+                        <p>This code is valid for 10 minutes.</p>
+                    </div>
+                `
+            });
+            console.log("✅ Email sent successfully to:", email);
+            res.status(201).json({ message: "OTP sent to email!" });
+
+        } catch (mailErr) {
+            await User.deleteOne({ email }); 
+            console.error("❌ NODEMAILER ERROR:", mailErr.message);
+            res.status(500).json({ message: "Email failed. Check server logs." });
+        }
+
+    } catch (err) {
+        console.error("❌ Database/Server Error:", err);
+        res.status(500).json({ message: "Registration error." });
+    }
 });
 
-// LOGIN
+app.post('/verify-otp', async (req, res) => {
+    try {
+        const { email, otp } = req.body;
+        const user = await User.findOne({ email: email.toLowerCase() });
+        if (!user) return res.status(404).json({ message: "User not found." });
+
+        if (user.otp === otp) {
+            user.isVerified = true;
+            user.otp = undefined; 
+            await user.save();
+            res.status(200).json({ message: "Verified successfully!" });
+        } else {
+            res.status(400).json({ message: "Invalid OTP." });
+        }
+    } catch (err) { res.status(500).json({ message: "Verification failed." }); }
+});
+
 app.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         const user = await User.findOne({ email: email.toLowerCase() });
+        
         if (!user) return res.status(400).json({ message: "User not found." });
+        if (!user.isVerified) return res.status(401).json({ message: "Please verify your email first." });
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Incorrect password." });
@@ -82,86 +144,50 @@ app.post('/login', async (req, res) => {
     } catch (err) { res.status(500).json({ message: "Login error." }); }
 });
 
-// --- 5. CART & ORDER API ---
-
-app.post('/sync-cart', async (req, res) => {
-    try {
-        const { email, cartItems } = req.body;
-        await User.findOneAndUpdate({ email: email.toLowerCase() }, { cart: cartItems });
-        res.status(200).json({ message: "Synced" });
-    } catch (err) { res.status(500).json({ message: "Sync error" }); }
-});
-
-app.post('/place-order', async (req, res) => {
-    try {
-        const { email, items, total, address } = req.body;
-        console.log("📦 Processing order for:", email);
-
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user) return res.status(404).json({ message: "User not found" });
-
-        const newOrder = new Order({
-            userId: user._id,
-            items,
-            totalAmount: total,
-            shippingAddress: address
-        });
-
-        await newOrder.save();
-        console.log("✅ Order saved to 'orders' collection");
-
-        // Update user: Clear cart and save address
-        await User.findOneAndUpdate(
-            { email: email.toLowerCase() },
-            { $set: { cart: [], address: address } }
-        );
-
-        res.status(201).json({ message: "Order placed successfully!" });
-    } catch (err) {
-        console.error("❌ Order error:", err);
-        res.status(500).json({ message: "Order processing failed" });
-    }
-});
-
-// --- 6. ADMIN API ---
-
-
-// --- 7. PRODUCTS & NAVIGATION ---
+// --- 6. PRODUCT ROUTE (ADDED BACK) ---
 app.get('/products', (req, res) => {
-    res.json([
+    const products = [
         { name: 'Keshypushti Hair Oil', price: 1609, desc: 'Deep nourishment.', benefits: ['Volume', 'Vitality'] },
         { name: 'Prati Darunaka Hair Oil', price: 1699, desc: 'Combats dandruff.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
         { name: 'Prati Palitya Hair Oil', price: 1699, desc: 'Premature greying care.', benefits: ['Restores Pigment', 'Shine'] },
         { name: 'Shirodhara Hair Oil', price: 1609, desc: 'Stress relief.', benefits: ['Better Sleep', 'Calming'] },
         { name: 'Keshyadharni Hair Oil', price: 1609, desc: 'Growth formula.', benefits: ['Strength', 'Reduced Breakage'] }
-    ]);
+    ];
+    res.json(products);
 });
 
-// --- 6. ADMIN API (MUST BE ABOVE NAVIGATION) ---
+// --- 7. ORDER & ADMIN ROUTES ---
+app.post('/place-order', async (req, res) => {
+    try {
+        const { email, items, total, address } = req.body;
+        const user = await User.findOne({ email: email.toLowerCase() });
+        const newOrder = new Order({ userId: user._id, items, totalAmount: total, shippingAddress: address });
+        await newOrder.save();
+        await User.findOneAndUpdate({ email: email.toLowerCase() }, { $set: { cart: [], address: address } });
+        res.status(201).json({ message: "Order placed!" });
+    } catch (err) { res.status(500).json({ message: "Order failed." }); }
+});
+
 app.get('/api/admin/orders', async (req, res) => {
     try {
         const orders = await Order.find().populate('userId', 'name email').sort({ createdAt: -1 });
-        res.status(200).json(orders);
-    } catch (err) { res.status(500).json({ message: "Error" }); }
+        res.json(orders);
+    } catch (err) { res.status(500).json({ message: "Error fetching orders" }); }
 });
-// DELETE ORDER (Mark as Completed/Remove)
+
 app.delete('/api/admin/orders/:id', async (req, res) => {
     try {
         await Order.findByIdAndDelete(req.params.id);
-        res.status(200).json({ message: "Order removed." });
-    } catch (err) {
-        res.status(500).json({ message: "Delete failed." });
-    }
+        res.json({ message: "Deleted" });
+    } catch (err) { res.status(500).json({ message: "Error deleting order" }); }
 });
 
-// --- 7. NAVIGATION (ALWAYS LAST) ---
-// This route is a 'catch-all'. If an API isn't found above, it sends the HTML.
 app.get('/admin-portal', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'admin.html'));
 });
+
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
 
-const PORT = 5000;
-app.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));
+app.listen(5000, () => console.log(`🚀 Server on http://localhost:5000`));
