@@ -130,7 +130,7 @@ body {
 /* --- HERO REFINEMENT --- */
 .hero {
     min-height: 100vh;
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.2)), url('assets/background.jpeg');
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.2)), url('assets/bg.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;

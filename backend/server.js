@@ -18,9 +18,9 @@ app.use(express.static(path.join(__dirname, '..', 'frontend')));
 const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-        user: 'prathmeshghuse4@gmail.com', 
+        user: 'nivorgo@gmail.com', 
         // Your 16-character App Password
-        pass: 'jbgkpfwdujizxguv'     
+        pass: 'wbtwxmxbfkbdxaee'     
     }
 });
 
@@ -84,7 +84,7 @@ app.post('/register', async (req, res) => {
         // 3. Send Email
         try {
             await transporter.sendMail({
-                from: '"Nivorgo Ayurveda" <prathmeshghuse4@gmail.com>',
+                from: '"Nivorgo Ayurveda" <nivorgo@gmail.com>',
                 to: email,
                 subject: 'Verify your Nivorgo Account',
                 html: `
@@ -189,5 +189,35 @@ app.get('/admin-portal', (req, res) => {
 app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
+// --- 8. CONTACT FORM ROUTE ---
+app.post('/contact', async (req, res) => {
+    const { name, email, message } = req.body;
+    try {
+      
+        await transporter.sendMail({
+            from: '"Nivorgo Website" <nivorgo@gmail.com>', // Sender (Must be your authenticated email)
+            to: 'nivorgo@gmail.com', // Recipient (Where YOU want to receive the inquiries)
+            replyTo: email, // This lets you simply hit "Reply" to email the customer back
+            subject: `🌿 New Inquiry from ${name}`,
+            html: `
+                <div style="font-family: sans-serif; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                    <h2 style="color: #4A5D45;">New Customer Message</h2>
+                    <p><strong>Name:</strong> ${name}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <hr>
+                    <p><strong>Message:</strong></p>
+                    <blockquote style="background: #f9f9f9; padding: 15px; border-left: 4px solid #4A5D45;">
+                        ${message}
+                    </blockquote>
+                </div>
+            `
+        });
+        console.log("✅ Contact message sent from:", email);
+        res.json({ message: "Message sent successfully!" });
 
+    } catch (err) {
+        console.error("❌ Contact Email Error:", err);
+        res.status(500).json({ message: "Failed to send message." });
+    }
+});
 app.listen(5000, () => console.log(`🚀 Server on http://localhost:5000`));

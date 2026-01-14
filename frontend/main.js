@@ -1,7 +1,8 @@
+ const apiBase = 'http://localhost:5000';
 document.addEventListener('DOMContentLoaded', () => {
     console.log('[main] NIVORGO Premium Engine Initialized');
 
-    const apiBase = 'http://localhost:5000';
+   
     // Product Images
     const images = ['assets/1.png', 'assets/2.png', 'assets/3.png', 'assets/4.png', 'assets/5.png'];
 
@@ -360,3 +361,45 @@ document.addEventListener('DOMContentLoaded', () => {
         cartButton.onclick = (e) => { e.preventDefault(); renderCartWindow(); bootstrap.Offcanvas.getOrCreateInstance(document.getElementById('cartOffcanvas')).show(); };
     }
 });
+
+// --- 7. CONTACT FORM LOGIC ---
+    const contactForm = document.getElementById('premium-contact-form');
+    if (contactForm) {
+        contactForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Stop page reload
+
+            // UI Feedback
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent; 
+            submitBtn.textContent = "Sending...";
+            submitBtn.disabled = true;
+
+            // Get values (using QuerySelector since inputs don't have IDs)
+            const name = contactForm.querySelector('input[placeholder="Your name"]').value;
+            const email = contactForm.querySelector('input[placeholder="Your email"]').value;
+            const message = contactForm.querySelector('textarea').value;
+
+            try {
+                console.log("mainclear");
+                const res = await fetch(`${apiBase}/contact`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, message })
+                });
+
+                if (res.ok) {
+                    alert("Message sent! We will get back to you soon. 🌿");
+                    contactForm.reset(); // Clear the form
+                } else {
+                    alert("Failed to send message. Please try again.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Server error. Please check your connection.");
+            } finally {
+                // Restore button
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    }
