@@ -42,7 +42,18 @@ const UserSchema = new mongoose.Schema({
         street: { type: String, default: "" },
         city: { type: String, default: "" },
         zipCode: { type: String, default: "" },
-        state: { type: String, default: "" }
+        state: { type: String, default: "" },
+       mobile_number: {
+    type: String,
+    default: "",
+    validate: {
+        validator: function(v) {
+            // Returns true only if the string is exactly 10 digits (0-9)
+            return /^\d{10}$/.test(v) || v === ""; 
+        },
+        message: props => `${props.value} is not a valid 10-digit phone number!`
+    }
+}
     },
     cart: [ { name: String, price: Number, quantity: { type: Number, default: 1 } } ]
 });
@@ -52,10 +63,10 @@ const Order = mongoose.model('Order', new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     items: { type: Array, required: true },
     totalAmount: { type: Number, required: true },
-    shippingAddress: { street: String, city: String, zipCode: String, state: String },
+    shippingAddress: { street: String, city: String, zipCode: String, state: String ,mobile_number:Number},
     status: { type: String, default: 'Pending' },
     createdAt: { type: Date, default: Date.now }
-}));
+}));    
 
 // --- 5. AUTH & OTP ROUTES ---
 app.post('/register', async (req, res) => {

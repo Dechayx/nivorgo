@@ -129,13 +129,14 @@ body {
 
 /* --- HERO REFINEMENT --- */
 .hero {
-    min-height: 100vh;
+    min-height: 140vh;
     background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.2)), url('assets/bg.png');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     display: flex;
     align-items: center;
+    
 }
 
 .hero h1 {
@@ -143,6 +144,7 @@ body {
     font-size: clamp(3rem, 7vw, 5rem);
     color: #fff;
     font-weight: 400;
+    
 }
 
 .hero-sub {
@@ -150,6 +152,7 @@ body {
     letter-spacing: 0.4em;
     color: #fff;
     font-size: 0.8rem;
+    
 }
 
 /* --- PRODUCT CARD (Editorial Style) --- */

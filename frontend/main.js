@@ -290,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('ship-city').value = savedAddress.city;
             document.getElementById('ship-zip').value = savedAddress.zipCode;
             document.getElementById('ship-state').value = savedAddress.state;
+            document.getElementById('ship-mobile_number').value = savedAddress.mobile_number;
         }
         
         bootstrap.Offcanvas.getInstance(document.getElementById('cartOffcanvas')).hide();
@@ -312,7 +313,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     street: document.getElementById('ship-street').value,
                     city: document.getElementById('ship-city').value,
                     zipCode: document.getElementById('ship-zip').value,
-                    state: document.getElementById('ship-state').value
+                    state: document.getElementById('ship-state').value,
+                    mobile_number:document.getElementById('ship-mobile_number').value,
                 }
             };
 
@@ -347,7 +349,8 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('profile-email').textContent = email;
             if (address.street) {
                 document.getElementById('profile-address').innerHTML = `
-                    ${address.street}<br>${address.city}, ${address.state} - ${address.zipCode}
+                    ${address.street}<br>${address.city}, ${address.state} - ${address.zipCode},      
+                    Mobile Number  ${address.mobile_number}
                 `;
             }
             
@@ -356,6 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('edit-street').value = address.street || '';
                 document.getElementById('edit-city').value = address.city || '';
                 document.getElementById('edit-zip').value = address.zipCode || '';
+                document.getElementById('edit-mobile').value = address.zipCode || '';
             }
         }
 
@@ -370,6 +374,7 @@ if (editForm) {
             street: document.getElementById('edit-street').value,
             city: document.getElementById('edit-city').value,
             zipCode: document.getElementById('edit-zip').value,
+            mobile_number:document.getElementById('edit-mobile').value,
             state: "Maharashtra" 
         };
 

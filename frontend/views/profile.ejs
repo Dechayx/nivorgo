@@ -83,6 +83,17 @@
                                 <input type="text" id="edit-zip" class="form-control" required>
                             </div>
                         </div>
+                        <div class="col-6 mb-3">
+    <label class="form-label">Mobile Number</label>
+    <input type="tel" 
+           id="edit-mobile" 
+           class="form-control" 
+           maxlength="10" 
+           pattern="\d{10}" 
+           placeholder="Enter 10 digits"
+           oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+           required>
+</div>
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-success">Save Changes</button>
