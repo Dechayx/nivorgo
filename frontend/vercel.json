@@ -16,6 +16,6 @@
     { "source": "/profile", "destination": "backend/server.js" },
     { "source": "/contact", "destination": "backend/server.js" },
     { "source": "/admin-portal", "destination": "backend/server.js" },
-    { "source": "/(.*)", "destination": "/frontend/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
