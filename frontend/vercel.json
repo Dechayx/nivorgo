@@ -1,22 +1,17 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "backend/server.js",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "frontend/**",
-      "use": "@vercel/static"
-    }
-  ],
   "rewrites": [
-    { "source": "/about", "destination": "/backend/server.js" },
-    { "source": "/why-ayurveda", "destination": "/backend/server.js" },
-    { "source": "/profile", "destination": "/backend/server.js" },
-    { "source": "/contact", "destination": "/backend/server.js" },
-    { "source": "/admin-portal", "destination": "/backend/server.js" },
-    { "source": "/", "destination": "/frontend/index.html" },
-    { "source": "/(.*)", "destination": "/frontend/$1" }
+    { 
+      "source": "/(about|why-ayurveda|profile|contact|admin-portal)", 
+      "destination": "/backend/server.js" 
+    },
+    { 
+      "source": "/(.*)", 
+      "destination": "/frontend/$1" 
+    },
+    { 
+      "source": "/", 
+      "destination": "/frontend/index.html" 
+    }
   ]
 }
