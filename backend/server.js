@@ -219,9 +219,9 @@ app.post('/contact', async (req, res) => {
         res.json({ message: "Sent!" });
     } catch (err) { res.status(500).json({ message: "Error" }); }
 });
-app.get('/about', (req, res) => res.render('aboutus'));
+/*app.get('/about', (req, res) => res.render('aboutus'));
 app.get('/why-ayurveda', (req, res) => res.render('ayurveda'));
-app.get('/profile', (req, res) => res.render('profile'));
+app.get('/profile', (req, res) => res.render('profile'));*/
 
 app.get('/admin-portal', (req, res) => {
     res.sendFile(path.join(process.cwd(), 'frontend', 'admin.html'));
