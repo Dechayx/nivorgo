@@ -11,11 +11,12 @@
     }
   ],
   "rewrites": [
-    { "source": "/about", "destination": "backend/server.js" },
-    { "source": "/why-ayurveda", "destination": "backend/server.js" },
-    { "source": "/profile", "destination": "backend/server.js" },
-    { "source": "/contact", "destination": "backend/server.js" },
-    { "source": "/admin-portal", "destination": "backend/server.js" },
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/about", "destination": "/backend/server.js" },
+    { "source": "/why-ayurveda", "destination": "/backend/server.js" },
+    { "source": "/profile", "destination": "/backend/server.js" },
+    { "source": "/contact", "destination": "/backend/server.js" },
+    { "source": "/admin-portal", "destination": "/backend/server.js" },
+    { "source": "/", "destination": "/frontend/index.html" },
+    { "source": "/(.*)", "destination": "/frontend/$1" }
   ]
 }
