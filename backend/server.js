@@ -1,31 +1,29 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const app = express();
 const path = require('path');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
 require('dotenv').config();
 
+const app = express();
+
 // --- 1. VIEW ENGINE & MIDDLEWARE ---
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '..', 'frontend', 'views'));
+// Use process.cwd() for Vercel compatibility
+app.set('views', path.join(process.cwd(), 'frontend', 'views'));
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+app.use(express.static(path.join(process.cwd(), 'frontend')));
 
-// --- 2. EMAIL CONFIGURATION ---
+// --- 2. EMAIL & DB CONFIGURATION ---
 const transporter = nodemailer.createTransport({
     service: 'gmail',
-    auth: {
-        user: 'nivorgo@gmail.com', 
-        pass: 'wbtwxmxbfkbdxaee'     
-    }
+    auth: { user: 'nivorgo@gmail.com', pass: 'wbtwxmxbfkbdxaee' }
 });
 
-// --- 3. MONGODB CONNECTION ---
 const dbURI = 'mongodb+srv://Nivorgo_user:kaK7Mn6juueJhjcQ@nivorgo.lergdu3.mongodb.net/?appName=Nivorgo';
 mongoose.connect(dbURI)
   .then(() => console.log("🍃 Nivorgo Database Connected"))
@@ -221,26 +219,18 @@ app.post('/contact', async (req, res) => {
         res.json({ message: "Sent!" });
     } catch (err) { res.status(500).json({ message: "Error" }); }
 });
-
-// --- 10. PAGE RENDERING ROUTES ---
 app.get('/about', (req, res) => res.render('aboutus'));
 app.get('/why-ayurveda', (req, res) => res.render('ayurveda'));
 app.get('/profile', (req, res) => res.render('profile'));
 
-// Protected Admin Portal
 app.get('/admin-portal', (req, res) => {
-    // Optional: Add a password check via query param like /admin-portal?pass=123
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'admin.html'));
+    res.sendFile(path.join(process.cwd(), 'frontend', 'admin.html'));
 });
 
 // --- 11. THE CATCH-ALL (MUST BE LAST) ---
-
-app.get(/(.*)/, (req, res) => {
-    res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(process.cwd(), 'frontend', 'index.html'));
 });
-
-// At the bottom of server.js
-app.set('views', path.join(process.cwd(), 'frontend', 'views'));
 
 // IMPORTANT: Export for Vercel
 module.exports = app;
