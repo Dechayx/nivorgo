@@ -239,4 +239,8 @@ app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'frontend', 'index.html'));
 });
 
+// At the bottom of server.js
+app.set('views', path.join(process.cwd(), 'frontend', 'views'));
+
+// IMPORTANT: Export for Vercel
 module.exports = app;
