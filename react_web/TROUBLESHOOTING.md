@@ -122,3 +122,18 @@ Try opening the app and:
 3. Check browser console for errors
 
 Let me know which step fails!
+
+## Deployment & API Issues
+
+### "Access to XMLHttpRequest... has been blocked... loopback address space"
+
+**Problem:**
+You are trying to connect your live frontend (`https://nivorgo-bxjd.vercel.app`) to your local backend (`http://localhost:5000`).
+Modern browsers block public websites from accessing private `localhost` addresses for security (Private Network Access).
+
+**Solution:**
+You cannot connect a public Vercel app to your local computer. You have two options:
+
+1.  **Test Locally:** Run the frontend on your computer (`http://localhost:5173`) to talk to `localhost:5000`.
+2.  **Deploy Backend:** Upload your `backend` folder to a hosting service like **Render** or **Railway** so it has a public URL (e.g., `https://nivorgo-backend.onrender.com`), then update your frontend API URL.
+
