@@ -44,27 +44,14 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
   return (
     <nav className={`navbar navbar-expand-lg navbar-dark fixed-top custom-navbar ${isScrolled || location.pathname !== '/' ? 'scrolled' : ''}`}
       style={location.pathname !== '/' ? { background: 'rgba(213, 224, 199, 0.9)' } : {}}>
-      <div className="container d-flex align-items-center justify-content-between">
-        <Link className="navbar-brand me-3 d-flex align-items-center gap-2" to="/">
+      <div className="container d-flex flex-wrap align-items-center justify-content-between">
+        <Link className="navbar-brand me-auto d-flex align-items-center gap-2" to="/">
           <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" style={{ height: '90px', objectFit: 'contain' }} />
           <span style={{ fontSize: '1.8rem', fontWeight: 'bold', letterSpacing: '1px' }}>NIVORGO</span>
         </Link>
 
-        <button className="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarContent">
-          <div className="navbar-nav mx-auto text-center">
-            <a className="nav-link px-3" href="/">Home</a>
-            <Link className="nav-link px-3" to="/about">About</Link>
-            <a className="nav-link px-3" href="/#products">Products</a>
-            <Link className="nav-link px-3" to="/why-ayurveda">Why Ayurveda</Link>
-            <a className="nav-link px-3" href="/#contact">Contact</a>
-          </div>
-        </div>
-
-        <div className="d-flex align-items-center gap-2 mobile-nav-icons">
+        {/* Icons (Mobile: Pos 2, Desktop: Pos 3) */}
+        <div className="d-flex align-items-center gap-2 mobile-nav-icons order-1 order-lg-3">
           <div className="d-flex align-items-center" id="user-nav-wrapper">
             <form id="search-form" className={`d-flex search-container ${searchActive ? 'active' : ''}`}>
               <input type="text" className="form-control me-2" placeholder="Search products..." />
@@ -95,6 +82,22 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
           <button className="btn btn-link position-relative text-light p-2" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
             👜 <span className="badge rounded-pill bg-danger">{cartCount}</span>
           </button>
+        </div>
+
+        {/* Hamburger (Mobile: Pos 3) */}
+        <button className="navbar-toggler border-0 order-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span className="navbar-toggler-icon"></span>
+        </button>
+
+        {/* Menu (Mobile: Pos 4 (Order 3 but width 100% forces break), Desktop: Pos 2) */}
+        <div className="collapse navbar-collapse order-3 order-lg-2" id="navbarContent">
+          <div className="navbar-nav mx-auto text-center">
+            <a className="nav-link px-3" href="/">Home</a>
+            <Link className="nav-link px-3" to="/about">About</Link>
+            <a className="nav-link px-3" href="/#products">Products</a>
+            <Link className="nav-link px-3" to="/why-ayurveda">Why Ayurveda</Link>
+            <a className="nav-link px-3" href="/#contact">Contact</a>
+          </div>
         </div>
       </div>
     </nav>
