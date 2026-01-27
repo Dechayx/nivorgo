@@ -46,7 +46,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
       <div className="container d-flex flex-wrap align-items-center justify-content-between">
         <Link className="navbar-brand me-auto d-flex align-items-center gap-2" to="/">
           <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" className="nav-logo" />
-          <span className="brand-text">NIVORGO</span>
+          <img src="/assets/nivorgo 2.png" alt="NIVORGO" className="brand-text-img" />
         </Link>
 
         {/* Icons (Mobile: Pos 2, Desktop: Pos 3) */}
@@ -55,7 +55,9 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
             <form id="search-form" className={`d-flex search-container ${searchActive ? 'active' : ''}`}>
               <input type="text" className="form-control me-2" placeholder="Search products..." />
             </form>
-            <button onClick={() => setSearchActive(!searchActive)} className="btn btn-link text-light p-2" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>🔍</button>
+            <button onClick={() => setSearchActive(!searchActive)} className="btn btn-link text-light p-2" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
+              <img src="/assets/search.png" alt="Search" className="nav-icon-img" />
+            </button>
 
             {user ? (
               <div className="d-flex align-items-center gap-3 animate-fade-in d-none d-lg-flex">
@@ -66,20 +68,20 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
               </div>
             ) : (
               <button className="btn btn-link text-light p-2" data-bs-toggle="modal" data-bs-target="#authModal" title="Login or Sign Up" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
-                👤
+                <img src="/assets/user.png" alt="User" className="nav-icon-img" />
               </button>
             )}
 
             {/* Mobile Profile Link (Icon only) */}
             {user && (
               <Link to="/profile" className="d-lg-none btn btn-link text-light p-2" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
-                👤
+                <img src="/assets/user.png" alt="User" className="nav-icon-img" />
               </Link>
             )}
           </div>
 
           <button className="btn btn-link position-relative text-light p-2" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
-            👜 <span className="badge rounded-pill bg-danger">{cartCount}</span>
+            <img src="/assets/carts.png" alt="Cart" className="nav-icon-img" /> <span className="badge rounded-pill bg-danger">{cartCount}</span>
           </button>
         </div>
 
@@ -110,7 +112,7 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
         <div className="col-lg-4 footer-logo-col" data-aos="fade-up">
           <div className="d-flex align-items-center gap-3 mb-2">
             <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" className="nav-logo-foo" />
-            <span className="brand-text-foo">NIVORGO</span>
+            <img src="/assets/nivorgo 2.png" alt="NIVORGO" className="brand-text-img-foo" />
           </div>
           <p className="text-muted pe-lg-5 mb-5">Bringing ancient Ayurvedic wisdom to your modern ritual. Pure, potent, and thoughtfully sourced.</p>
           <div className="contact-details mt-4">
