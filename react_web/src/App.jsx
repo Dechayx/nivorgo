@@ -42,7 +42,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
 
   return (
     <nav className={`navbar navbar-expand-lg navbar-dark fixed-top custom-navbar ${isScrolled || location.pathname !== '/' ? 'scrolled' : ''}`}
-      style={location.pathname !== '/' ? { background: 'rgba(213, 224, 199, 0.9)' } : {}}>
+      style={location.pathname !== '/' ? { backgroundImage: "url('/assets/image.png')", backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
       <div className="container d-flex flex-wrap align-items-center justify-content-between">
         <Link className="navbar-brand me-auto d-flex align-items-center gap-2" to="/">
           <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" className="nav-logo" />
@@ -151,9 +151,13 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
       <div className="row mt-5 pt-4 border-top">
         <div className="col-md-6 text-center text-md-start"><p className="small text-muted">© 2026 NIVORGO. All Rights Reserved.</p></div>
         <div className="col-md-6 text-center text-md-end">
-          <div className="social-links">
-            <a href="#" className="text-muted me-3 small text-decoration-none">Instagram</a>
-            <a href="#" className="text-muted me-3 small text-decoration-none">LinkedIn</a>
+          <div className="social-links d-flex align-items-center justify-content-end">
+            <a href="#" className="me-3 text-decoration-none">
+              <img src="/assets/image copy.png" alt="Instagram" className="footer-icon-img" />
+            </a>
+            <a href="#" className="me-3 text-decoration-none">
+              <img src="/assets/image copy 2.png" alt="LinkedIn" className="footer-icon-img" />
+            </a>
             <a href="#" className="text-muted small text-decoration-none">Privacy Policy</a>
           </div>
         </div>

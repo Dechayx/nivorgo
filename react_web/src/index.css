@@ -213,7 +213,10 @@ h6,
 
 .custom-navbar.scrolled {
   padding: 15px 0;
-  background: rgba(157, 167, 160, 0.95);
+  background-image: url('/assets/image.png');
+  background-size: cover;
+  background-position: center;
+  /* background: rgba(157, 167, 160, 0.95);  Removed solid color */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
@@ -510,4 +513,20 @@ h6,
 
 .nav-icon-img:hover {
   transform: scale(1.1);
+}
+
+/* Footer Icons */
+.footer-icon-img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+  filter: grayscale(100%);
+  /* Start clean/black */
+}
+
+.footer-icon-img:hover {
+  transform: scale(1.1);
+  filter: grayscale(0%);
+  /* Reveal color on hover */
 }
