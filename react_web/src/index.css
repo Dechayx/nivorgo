@@ -1,34 +1,53 @@
-/* Import Luxury Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap');
+/* Import Luxury Fonts - Montserrat is the closest free alternatives to Gotham */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap');
 
 :root {
-  --primary-forest: #2C3E2D;
+  /* Colors */
+  --primary-forest: #1C2820;
+  /* Darker, more serious green */
   --accent-terracotta: #B4846C;
-  --bg-silk: #F9F7F2;
-  --text-dark: #1A1A1A;
-  --transition-smooth: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --bg-silk: #F4F4F4;
+  /* Slightly cooler grey-white */
+  --text-dark: #111111;
+  /* Sharp black */
+  --transition-smooth: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
   --accent: #B4846C;
+
+  /* Typography - Gotham Simulation */
+  --font-main: 'Montserrat', sans-serif;
 }
 
 body {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', sans-serif;
+  font-family: var(--font-main);
   background-color: var(--bg-silk);
   color: var(--text-dark);
   line-height: 1.6;
   margin: 0;
+  -webkit-font-smoothing: antialiased;
 }
 
-.font-serif {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', serif;
+/* Force Gotham-like styling everywhere */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.font-serif,
+.navbar-brand,
+.btn,
+.nav-link {
+  font-family: var(--font-main) !important;
 }
 
 /* --- HERO SECTION REFINEMENT --- */
 .hero {
-  min-height: 150vh;
+  min-height: 100vh;
   position: relative;
   overflow: hidden;
   display: flex;
   align-items: center;
+  justify-content: center;
   text-align: center;
   padding-top: 80px;
   z-index: 1;
@@ -41,11 +60,11 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(167, 159, 159, 0.3)), url('/assets/bg.png');
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.3)), url('/assets/bg.png');
   background-size: cover;
   background-position: center;
   z-index: -1;
-  animation: heroZoom 10s infinite alternate ease-in-out;
+  animation: heroZoom 15s infinite alternate ease-in-out;
 }
 
 @keyframes heroZoom {
@@ -54,44 +73,44 @@ body {
   }
 
   100% {
-    transform: scale(1.15);
+    transform: scale(1.1);
   }
 }
 
 .hero h1 {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', serif;
-  font-size: clamp(3rem, 8vw, 5.5rem);
-  font-weight: 400;
+  font-size: clamp(3.5rem, 9vw, 6.5rem);
+  font-weight: 800;
   color: #fff;
   margin-bottom: 24px;
-  line-height: 1.1;
+  line-height: 1;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  /* Tight packing for large Gotham headers */
 }
 
 .hero p {
   text-transform: uppercase;
-  letter-spacing: 0.4em;
-  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.9);
   margin-bottom: 40px;
+  font-weight: 500;
 }
 
-.hero-sub {
-  text-transform: uppercase;
-  letter-spacing: 0.4em;
-  color: #fff;
-  font-size: 0.8rem;
-}
-
-/* --- PRODUCT SECTION (EDITORIAL STYLE) --- */
+/* --- PRODUCT SECTION (GOTHAM STYLE) --- */
 .section-products {
-  background-color: #F4F1EC;
+  background-color: #EBEBEB;
+  /* Cleaner grey */
   padding: 120px 0;
 }
 
 #products h2 {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', serif;
-  font-size: 3rem;
-  margin-bottom: 60px;
+  font-size: 3.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-bottom: 70px;
+  color: #1A1A1A;
 }
 
 .product-card {
@@ -105,15 +124,15 @@ body {
 .product-image-wrapper {
   position: relative;
   overflow: hidden;
-  background: #EBE8E2;
-  padding: 30px;
-  border-radius: 4px;
+  background: #FFFFFF;
+  padding: 40px;
   transition: var(--transition-smooth);
 }
 
 .main-img {
   width: 100%;
   transition: transform 0.8s ease;
+  filter: contrast(1.05);
 }
 
 .product-actions {
@@ -123,57 +142,62 @@ body {
   right: 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 0 15px;
+  gap: 0;
+  padding: 0;
   opacity: 0;
-  transition: all 0.5s ease;
+  transition: all 0.4s ease;
   z-index: 10;
 }
 
 .product-card:hover .product-actions {
-  bottom: 20px;
+  bottom: 0;
   opacity: 1;
 }
 
 .product-card:hover .main-img {
-  transform: scale(1.08);
-}
-
-.product-card-desc {
-  font-size: 0.8rem;
-  color: #666;
-  margin-top: 8px;
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', sans-serif;
-  text-transform: capitalize;
-  line-height: 1.4;
+  transform: scale(1.05);
 }
 
 .product-card:hover .product-image-wrapper {
-  background: #E2DFD8;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
 }
 
 .product-info h3 {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', serif;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   margin-top: 25px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.product-card-desc {
+  font-size: 0.85rem;
+  color: #555;
+  margin-top: 5px;
+  font-weight: 400;
 }
 
 .action-btn {
   width: 100%;
-  padding: 10px;
-  border: 1px solid var(--primary-forest);
-  font-size: 0.7rem;
+  padding: 15px;
+  border: none;
+  font-size: 0.75rem;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
+  letter-spacing: 2px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .quick-view-btn {
   background: white;
-  color: var(--primary-forest);
+  color: #111;
+  border-top: 1px solid #eee;
 }
 
-
+.action-btn:hover {
+  background: #111;
+  color: white;
+}
 
 .cart-btn {
   background: var(--primary-forest);
@@ -182,26 +206,17 @@ body {
 
 /* --- NAVBAR --- */
 .custom-navbar {
-
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.4s ease;
   background: transparent;
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', sans-serif;
-}
-
-.custom-navbar .nav-link,
-.custom-navbar .btn,
-.custom-navbar .navbar-brand,
-.custom-navbar span,
-.custom-navbar a {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', sans-serif !important;
+  padding: 20px 0;
 }
 
 .custom-navbar.scrolled {
-  padding: 40px;
-  background: rgba(147, 164, 124, 0.9);
+  padding: 15px 0;
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(1px);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
 }
 
 .custom-navbar.scrolled .nav-link,
@@ -211,73 +226,84 @@ body {
 }
 
 .nav-center .nav-link {
-  font-weight: 500;
-  letter-spacing: 2px;
+  font-weight: 600;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
+  margin: 0 10px;
 }
 
 .navbar-brand {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', serif;
-  font-weight: 700;
-  letter-spacing: 2px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  font-size: 1.5rem;
+  text-transform: uppercase;
 }
 
 .nav-logo {
-  height: 200px;
+  height: 180px;
   width: auto;
   position: absolute;
-
-  left: 15px;
+  left: 20px;
   z-index: 100;
   object-fit: contain;
   transition: all 0.3s ease;
 }
 
 .brand-text {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', sans-serif !important;
-  font-weight: bold;
-  letter-spacing: 1px;
-  font-size: 2rem;
-  margin-left: 140px;
-  /* Clearance for logo */
+  font-weight: 900 !important;
+  letter-spacing: 2px;
+  font-size: 1.8rem;
+  margin-left: 130px;
 }
 
 @media (max-width: 991px) {
   .nav-logo {
     position: relative;
-    height: 15 0px;
+    height: 60px;
     left: 0;
+    margin-right: 10px;
   }
 
   .brand-text {
-    margin-left: 10px;
-    font-size: 1.2rem;
+    margin-left: 0;
+    font-size: 1.4rem;
+  }
+
+  .custom-navbar {
+    background: #fff;
+    padding: 10px 0;
+  }
+
+  .custom-navbar .nav-link,
+  .custom-navbar .navbar-brand,
+  .custom-navbar .btn-link {
+    color: #111 !important;
   }
 }
-
 
 /* --- BUTTONS --- */
 .btn-success {
   background-color: var(--primary-forest);
   border: none;
-  padding: 15px 40px;
+  padding: 16px 45px;
   border-radius: 0;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
-  font-weight: 600;
-  transition: var(--transition-smooth);
+  font-weight: 700;
+  font-size: 0.8rem;
+  transition: all 0.3s ease;
 }
 
 .btn-success:hover {
-  background-color: #1e2b1f;
-  transform: letter-spacing 0.3s;
-  letter-spacing: 0.2em;
+  background-color: #000;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* --- FOOTER & CONTACT --- */
 .footer-contact-section {
-  background-color: #f1efeb;
+  background-color: #f8f8f8;
   padding: 100px 0 40px 0;
   color: var(--text-dark);
 }
@@ -286,66 +312,70 @@ body {
   height: 80px;
   width: auto;
   object-fit: contain;
-  transition: all 0.3s ease;
-  margin-left: -70px;
+  margin-left: -20px;
 }
 
 .brand-text-foo {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', sans-serif !important;
-  font-weight: bold;
-  letter-spacing: 1px;
-  font-size: 2rem;
-  margin-left: 0px;
-  /* Clearance for logo */
+  font-weight: 800;
+  letter-spacing: 2px;
+  font-size: 1.5rem;
 }
-
 
 .footer-form-wrapper {
   background: #ffffff;
-  border-radius: 4px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.04);
+  border: 1px solid #eee;
+  border-radius: 0;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
 }
 
 .premium-input {
-  border: none;
-  border-bottom: 1px solid #e0e0e0;
+  border: 1px solid #eee;
   border-radius: 0;
-  background: transparent !important;
-  padding: 10px 0;
+  background: #fcfcfc !important;
+  padding: 15px;
   font-size: 0.9rem;
   width: 100%;
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', sans-serif;
-}
-
-.form-label {
-  font-family: 'gotham-combat', 'gotham', 'Playfair Display', sans-serif;
-  font-size: 0.85rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-  color: #333;
 }
 
 .premium-input:focus {
+  border-color: #111;
+  background: #fff !important;
   box-shadow: none;
-  outline: none;
-  border-color: var(--primary-forest);
+}
+
+.form-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  color: #111;
+  margin-bottom: 8px;
 }
 
 .category-tag {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   text-transform: uppercase;
   letter-spacing: 3px;
-  font-weight: 700;
-  color: var(--accent);
+  font-weight: 800;
+  color: #777;
   display: block;
+  margin-bottom: 10px;
 }
 
-/* Price Tag Styling */
 .price-tag {
-  color: var(--accent);
-  font-weight: 600;
-  letter-spacing: 1px;
+  color: var(--primary-forest);
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0;
+}
+
+/* Modals */
+.modal-content {
+  border-radius: 0;
+}
+
+.modal-backdrop.show {
+  opacity: 0.8;
 }
 
 /* Animations */
@@ -356,7 +386,7 @@ body {
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(20px);
   }
 
   to {
@@ -365,221 +395,22 @@ body {
   }
 }
 
-/* Search Container */
+/* Search */
 .search-container {
   width: 0;
   overflow: hidden;
-  transition: width 0.4s ease-in-out, opacity 0.4s ease-in-out;
+  transition: width 0.4s ease;
   opacity: 0;
 }
 
 .search-container.active {
-  width: 150px;
-  /* Smaller for mobile by default */
+  width: 200px;
   opacity: 1;
 }
 
-@media (min-width: 992px) {
-  .search-container.active {
-    width: 250px;
-  }
-
-  .footer-form-wrapper {
-    margin-top: -50px;
-    position: relative;
-    z-index: 5;
-  }
-
-  .navbar-collapse {
-    /* Prevent shifting when expanding */
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-}
-
-/* Auth Section Toggle */
+/* Login/Auth */
 #login-section,
 #signup-section,
 #otp-section {
   transition: all 0.3s ease;
-}
-
-/* Swiper overrides */
-.product-slider {
-  width: 100%;
-  height: auto;
-  overflow: hidden;
-  position: relative;
-  padding: 20px 0 50px 0;
-}
-
-.swiper-pagination-bullet-active {
-  background: var(--primary-forest) !important;
-}
-
-/* Profile / Cart Items */
-.cart-item img {
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  background: #EBE8E2;
-  margin-right: 15px;
-}
-
-/* --- FEATURES --- */
-.feature-item {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  font-size: 3rem;
-  /* Large Icon Size */
-  margin-bottom: 20px;
-}
-
-.feature-item h6 {
-  margin: 0;
-  font-size: 0.9rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  line-height: 1.2;
-}
-
-/* --- RESPONSIVE MEDIA QUERIES --- */
-
-/* Mobile & Tablet adjustments */
-@media (max-width: 991px) {
-  .custom-navbar {
-    background: rgba(213, 224, 199, 0.95);
-    /* Always show background on mobile for legibility */
-    padding: 5px 0;
-  }
-
-  .custom-navbar .navbar-collapse {
-    background: rgba(213, 224, 199, 0.98);
-    margin-top: 15px;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  }
-
-  .navbar-nav .nav-link {
-    color: #333 !important;
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-  }
-
-  .navbar-toggler {
-    border: none;
-    padding: 0;
-    margin-left: auto;
-    /* Push toggler to right */
-    margin-right: 15px;
-  }
-
-  .navbar-toggler:focus {
-    box-shadow: none;
-  }
-
-  /* Ensure icons stay on right */
-  .mobile-nav-icons {
-    margin-left: 0;
-  }
-
-  /* Reset Footer Logo Column margins on mobile */
-  .footer-logo-col {
-    margin-top: 0 !important;
-    text-align: center;
-  }
-
-  .nav-logo-foo {
-    margin-left: 0;
-    height: 100px;
-    /* Smaller on mobile */
-    display: inline-block;
-  }
-
-  .brand-text-foo {
-    font-size: 1.5rem;
-  }
-
-  /* Center align footer content on mobile */
-  .footer-contact-section .d-flex.align-items-center.gap-3.mb-4 {
-    justify-content: center;
-  }
-
-  .footer-contact-section .contact-details .d-flex {
-    justify-content: center;
-  }
-
-  /* Feature items on mobile */
-  .feature-item {
-    font-size: 2rem;
-    flex-direction: column;
-    text-align: center;
-    gap: 8px;
-  }
-
-  .hero {
-    min-height: 100vh;
-    /* Shorter hero on mobile */
-    background-attachment: scroll;
-    padding-top: 100px;
-  }
-
-  .hero h1 {
-    font-size: 2.5rem;
-    /* Smaller font */
-  }
-
-  .section-products {
-    padding: 60px 0;
-  }
-
-  /* Make product buttons visible on mobile without hover */
-  .product-actions {
-    position: static;
-    opacity: 1;
-    flex-direction: row;
-    margin-top: 15px;
-    padding: 0;
-  }
-
-  .product-image-wrapper {
-    padding-bottom: 10px;
-  }
-}
-
-/* Specific Footer Logo Col style for Desktop */
-@media (min-width: 992px) {
-  .footer-logo-col {
-    margin-top: -50px;
-  }
-}
-
-/* Small mobile devices */
-@media (max-width: 576px) {
-  .hero h1 {
-    font-size: 2rem;
-  }
-
-  .btn-success {
-    padding: 12px 30px;
-    width: 100%;
-  }
-
-  .hero p {
-    font-size: 0.7rem;
-    margin-bottom: 20px;
-  }
-
-  /* Adjust modal padding */
-  .modal-body.p-5 {
-    padding: 2rem !important;
-  }
-
-  .footer-contact-section {
-    padding-top: 60px;
-  }
 }
