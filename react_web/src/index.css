@@ -213,7 +213,7 @@ h6,
 
 .custom-navbar.scrolled {
   padding: 15px 0;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(157, 167, 160, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.05);
@@ -252,9 +252,9 @@ h6,
 
 .brand-text {
   font-weight: 900 !important;
-  letter-spacing: 2px;
+
   font-size: 1.8rem;
-  margin-left: 130px;
+  margin-left: 50px;
 }
 
 @media (max-width: 991px) {
