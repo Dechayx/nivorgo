@@ -107,8 +107,8 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
   <footer id="contact" className="footer-contact-section">
     <div className="container">
       <div className="row g-5">
-        <div className="col-lg-4" data-aos="fade-up" style={{ marginTop: '-50px' }}>
-          <div className="d-flex align-items-center gap-3 mb-4">
+        <div className="col-lg-4 footer-logo-col" data-aos="fade-up">
+          <div className="d-flex align-items-center gap-3 mb-2">
             <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" className="nav-logo-foo" />
             <span className="brand-text-foo">NIVORGO</span>
           </div>

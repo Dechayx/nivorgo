@@ -84,7 +84,7 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                                                     {p.mrp && <span className="text-muted text-decoration-line-through" style={{ fontSize: '0.9rem' }}>{formatPrice(p.mrp)}</span>}
                                                     <p className="price-tag mb-0">{formatPrice(p.price)}</p>
                                                 </div>
-
+                                                <p className="product-card-desc">{p.desc}</p>
                                             </div>
                                         </div>
                                     </SwiperSlide>
