@@ -21,12 +21,11 @@ import Ayurveda from './pages/Ayurveda';
 const apiBase = 'http://localhost:5000';
 const images = ['/assets/1.png', '/assets/2.png', '/assets/3.png', '/assets/4.png', '/assets/5.png'];
 
-const defaultProducts = [
-  { name: 'Keshypushti Hair Oil', price: 1609, desc: 'Deep nourishment.', benefits: ['Volume', 'Vitality'] },
-  { name: 'Prati Darunaka Hair Oil', price: 1699, desc: 'Combats dandruff.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
-  { name: 'Prati Palitya Hair Oil', price: 1699, desc: 'Premature greying care.', benefits: ['Restores Pigment', 'Shine'] },
-  { name: 'Shirodhara Hair Oil', price: 1609, desc: 'Stress relief.', benefits: ['Better Sleep', 'Calming'] },
-  { name: 'Keshyadharni Hair Oil', price: 1609, desc: 'Growth formula.', benefits: ['Strength', 'Reduced Breakage'] }
+const defaultProducts = [{ name: 'Keshypushti Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Deep nourishment for volume & vitality.', benefits: ['Volume', 'Vitality'] },
+{ name: 'Pratidarunaka Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Effective relief from dandruff & itchiness.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
+{ name: 'Prati Palitya Hair Oil', category: 'Ayurvedic Hair Oils', price: 1699, mrp: 1999, desc: 'Prevents premature greying & restores shine.', benefits: ['Restores Pigment', 'Shine'] },
+{ name: 'Shirodhara Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Relieves stress & promotes deep sleep.', benefits: ['Better Sleep', 'Calming'] },
+{ name: 'Keshyadharni Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Strengthens roots to reduce hair fall.', benefits: ['Strength', 'Reduced Breakage'] }
 ];
 
 // --- Sub-Components (Internal for simplicity) ---
@@ -46,8 +45,8 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
       style={location.pathname !== '/' ? { background: 'rgba(213, 224, 199, 0.9)' } : {}}>
       <div className="container d-flex flex-wrap align-items-center justify-content-between">
         <Link className="navbar-brand me-auto d-flex align-items-center gap-2" to="/">
-          <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" style={{ height: '90px', objectFit: 'contain' }} />
-          <span style={{ fontSize: '1.8rem', fontWeight: 'bold', letterSpacing: '1px' }}>NIVORGO</span>
+          <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" className="nav-logo" />
+          <span className="brand-text">NIVORGO</span>
         </Link>
 
         {/* Icons (Mobile: Pos 2, Desktop: Pos 3) */}
@@ -108,11 +107,11 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
   <footer id="contact" className="footer-contact-section">
     <div className="container">
       <div className="row g-5">
-        <div className="col-lg-4" data-aos="fade-up">
-          <h2 className="navbar-brand font-serif mb-4 d-flex align-items-center gap-2" style={{ fontSize: '2rem' }}>
-            <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" style={{ height: '80px', objectFit: 'contain' }} />
-            NIVORGO
-          </h2>
+        <div className="col-lg-4" data-aos="fade-up" style={{ marginTop: '-50px' }}>
+          <div className="d-flex align-items-center gap-3 mb-4">
+            <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" className="nav-logo-foo" />
+            <span className="brand-text-foo">NIVORGO</span>
+          </div>
           <p className="text-muted pe-lg-5 mb-5">Bringing ancient Ayurvedic wisdom to your modern ritual. Pure, potent, and thoughtfully sourced.</p>
           <div className="contact-details mt-4">
             <div className="d-flex mb-3"><span className="me-3">📍</span><p className="small mb-0">Pune, Maharashtra, India</p></div>

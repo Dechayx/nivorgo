@@ -26,8 +26,8 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                             <h2 className="display-5 font-serif mt-2 mb-4">Ancient Wisdom,<br />Thoughtfully Sourced.</h2>
                             <p className="lead">NIVORGO brings pure, handpicked botanicals to your daily ritual, restoring balance through gentle production.</p>
                             <div className="row mt-4">
-                                <div className="col-6"><div className="feature-item">🌿 <h6>100% Natural</h6></div></div>
-                                <div className="col-6"><div className="feature-item">🔬 <h6>Clinically Minded</h6></div></div>
+                                <div className="col-6"><div className="feature-item">🌿 <h6 style={{ fontWeight: 'bold', fontSize: '1rem' }}>100% Natural</h6></div></div>
+                                <div className="col-6"><div className="feature-item">🔬 <h6 style={{ fontWeight: 'bold', fontSize: '1rem' }}>Clinically Minded</h6></div></div>
                             </div>
                         </div>
                         <div className="col-lg-6" data-aos="zoom-in">
@@ -80,7 +80,11 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                                             </div>
                                             <div className="product-info">
                                                 <h3 className="font-serif">{p.name}</h3>
-                                                <p className="price-tag">{formatPrice(p.price)}</p>
+                                                <div className="d-flex justify-content-center align-items-center gap-2">
+                                                    {p.mrp && <span className="text-muted text-decoration-line-through" style={{ fontSize: '0.9rem' }}>{formatPrice(p.mrp)}</span>}
+                                                    <p className="price-tag mb-0">{formatPrice(p.price)}</p>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </SwiperSlide>
