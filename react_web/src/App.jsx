@@ -18,7 +18,7 @@ import Admin from './pages/Admin';
 import AboutUs from './pages/AboutUs';
 import Ayurveda from './pages/Ayurveda';
 
-const apiBase = 'http://localhost:5000';
+const apiBase = 'https://nivorgo-backend.onrender.com';
 const images = ['/assets/1.webp', '/assets/2.webp', '/assets/3.webp', '/assets/4.webp', '/assets/5.webp'];
 
 const defaultProducts = [{ name: 'Keshypushti Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Deep nourishment for volume & vitality.', benefits: ['Volume', 'Vitality'] },
