@@ -19,7 +19,7 @@ import AboutUs from './pages/AboutUs';
 import Ayurveda from './pages/Ayurveda';
 
 const apiBase = 'http://localhost:5000';
-const images = ['/assets/1.png', '/assets/2.png', '/assets/3.png', '/assets/4.png', '/assets/5.png'];
+const images = ['/assets/1.webp', '/assets/2.webp', '/assets/3.webp', '/assets/4.webp', '/assets/5.webp'];
 
 const defaultProducts = [{ name: 'Keshypushti Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Deep nourishment for volume & vitality.', benefits: ['Volume', 'Vitality'] },
 { name: 'Pratidarunaka Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Effective relief from dandruff & itchiness.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
@@ -45,7 +45,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
       style={location.pathname !== '/' ? { backgroundImage: "url('/assets/image.png')", backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
       <div className="container d-flex flex-wrap align-items-center justify-content-between">
         <Link className="navbar-brand me-auto d-flex align-items-center gap-2" to="/">
-          <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" className="nav-logo" />
+          <img src="/assets/niv orgo logo.webp" alt="Nivorgo Logo" className="nav-logo" />
           <img src="/assets/nivorgo 2.png" alt="NIVORGO" className="brand-text-img" />
         </Link>
 
@@ -111,7 +111,7 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
       <div className="row g-5">
         <div className="col-lg-4 footer-logo-col" data-aos="fade-up">
           <div className="d-flex align-items-center gap-3 mb-2">
-            <img src="/assets/niv orgo logo.png" alt="Nivorgo Logo" className="nav-logo-foo" />
+            <img src="/assets/niv orgo logo.webp" alt="Nivorgo Logo" className="nav-logo-foo" />
             <img src="/assets/nivorgo 2.png" alt="NIVORGO" className="brand-text-img-foo" />
           </div>
           <p className="text-muted pe-lg-5 mb-5">Bringing ancient Ayurvedic wisdom to your modern ritual. Pure, potent, and thoughtfully sourced.</p>

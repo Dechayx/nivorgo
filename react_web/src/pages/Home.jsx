@@ -32,7 +32,7 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                         </div>
                         <div className="col-lg-6" data-aos="zoom-in">
                             <div className="about-image-frame">
-                                <img src="/assets/bg.png" className="img-fluid rounded" alt="Nivorgo" />
+                                <img src="/assets/bg.webp" className="img-fluid rounded" alt="Nivorgo" loading="lazy" />
                             </div>
                         </div>
                     </div>
@@ -62,7 +62,7 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                                     <SwiperSlide key={i}>
                                         <div className="product-card">
                                             <div className="product-image-wrapper">
-                                                <img src={imgUrl} alt={p.name} className="main-img" />
+                                                <img src={imgUrl} alt={p.name} className="main-img" loading="lazy" />
                                                 <div className="product-actions">
                                                     <button
                                                         className="action-btn quick-view-btn"
