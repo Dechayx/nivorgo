@@ -7,15 +7,27 @@ const nodemailer = require('nodemailer');
 require('dotenv').config();
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 // --- MIDDLEWARE ---
-app.use(cors());
+// Define allowed origins (e.g., your frontend URL)
+const corsOptions = {
+    origin: [
+        'http://localhost:5173',
+        'http://localhost:3000',
+        process.env.FRONTEND_URL // Add your Render frontend URL here after deployment
+    ].filter(Boolean),
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // --- DATABASE CONNECTION ---
 // Using the URI from your previous backend
-const dbURI = 'mongodb+srv://Nivorgo_user:kaK7Mn6juueJhjcQ@nivorgo.lergdu3.mongodb.net/?appName=Nivorgo';
+const dbURI = process.env.MONGODB_URI || 'mongodb+srv://Nivorgo_user:kaK7Mn6juueJhjcQ@nivorgo.lergdu3.mongodb.net/?appName=Nivorgo';
 mongoose.connect(dbURI)
     .then(() => console.log("🍃 Nivorgo Database Connected"))
     .catch(err => console.error("❌ DB Error:", err));
@@ -59,7 +71,10 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
     service: 'gmail',
-    auth: { user: 'nivorgo@gmail.com', pass: 'wbtwxmxbfkbdxaee' }
+    auth: {
+        user: process.env.EMAIL_USER || 'nivorgo@gmail.com',
+        pass: process.env.EMAIL_PASS || 'wbtwxmxbfkbdxaee'
+    }
 });
 
 // --- ROUTES ---
