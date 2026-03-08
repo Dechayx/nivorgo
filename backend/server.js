@@ -19,8 +19,8 @@ app.use((req, res, next) => {
 // Define allowed origins (e.g., your frontend URL)
 const corsOptions = {
     origin: function (origin, callback) {
-        // Allow localhost and any vercel.app subdomain for Nivorgo
-        if (!origin || origin.includes('localhost') || origin.includes('vercel.app')) {
+        // Allow localhost, vercel.app subdomains, and the main domain nivorgo.com
+        if (!origin || origin.includes('localhost') || origin.includes('vercel.app') || origin.includes('nivorgo.com')) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));

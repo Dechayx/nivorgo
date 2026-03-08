@@ -204,7 +204,7 @@ h6,
 
 /* --- SWIPER PAGINATION --- */
 .product-slider .swiper {
-  padding-bottom: 60px !important;
+  padding-bottom: 10px !important;
 }
 
 .product-slider .swiper-pagination {
