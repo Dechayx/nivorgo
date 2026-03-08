@@ -8,15 +8,24 @@ require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+const JWT_SECRET = process.env.JWT_SECRET || 'nivorgo_super_secret_key_2026';
 
 // --- MIDDLEWARE ---
+// Debug Logger for Production
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path} - Origin: ${req.headers.origin}`);
+    next();
+});
 // Define allowed origins (e.g., your frontend URL)
 const corsOptions = {
-    origin: [
-        'http://localhost:5173',
-        'http://localhost:3000',
-        'https://nivorgo-bxjd.vercel.app'
-    ],
+    origin: function (origin, callback) {
+        // Allow localhost and any vercel.app subdomain for Nivorgo
+        if (!origin || origin.includes('localhost') || origin.includes('vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -129,7 +138,7 @@ app.post('/login', async (req, res) => {
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Incorrect password." });
 
-        const token = jwt.sign({ id: user._id }, 'secret', { expiresIn: '24h' });
+        const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '24h' });
         res.json({ token, user: { name: user.name, email: user.email, address: user.address, cart: user.cart } });
     } catch (err) { res.status(500).json({ message: "Login error." }); }
 });
@@ -141,7 +150,7 @@ const authenticateToken = (req, res, next) => {
 
     if (!token) return res.status(401).json({ message: "Access Denied. No Token." });
 
-    jwt.verify(token, 'secret', (err, user) => {
+    jwt.verify(token, JWT_SECRET, (err, user) => {
         if (err) return res.status(403).json({ message: "Invalid Token." });
         req.user = user;
         next();
