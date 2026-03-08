@@ -45,7 +45,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
       style={location.pathname !== '/' ? { backgroundImage: "url('/assets/image.png')", backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
       <div className="container d-flex flex-wrap align-items-center justify-content-between">
         <Link className="navbar-brand me-auto d-flex align-items-center gap-2" to="/">
-          <img src="/assets/niv orgo logo.webp" alt="Nivorgo Logo" className="nav-logo" />
+          <img src="/assets/nivorgo logo Green.png" alt="Nivorgo Logo" className="nav-logo" />
           <img src="/assets/nivorgo 2.png" alt="NIVORGO" className="brand-text-img" />
         </Link>
 
@@ -111,7 +111,7 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
       <div className="row g-5">
         <div className="col-lg-4 footer-logo-col" data-aos="fade-up">
           <div className="d-flex align-items-center gap-3 mb-2">
-            <img src="/assets/niv orgo logo.webp" alt="Nivorgo Logo" className="nav-logo-foo" />
+            <img src="/assets/nivorgo logo Green.png" alt="Nivorgo Logo" className="nav-logo-foo" />
             <img src="/assets/nivorgo 2.png" alt="NIVORGO" className="brand-text-img-foo" />
           </div>
           <p className="text-muted pe-lg-5 mb-5">Bringing ancient Ayurvedic wisdom to your modern ritual. Pure, potent, and thoughtfully sourced.</p>
