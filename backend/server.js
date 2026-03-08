@@ -79,7 +79,9 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // use SSL
     auth: {
         user: process.env.EMAIL_USER || 'nivorgo@gmail.com',
         pass: process.env.EMAIL_PASS || 'wbtwxmxbfkbdxaee'
@@ -87,6 +89,8 @@ const transporter = nodemailer.createTransport({
 });
 
 // --- ROUTES ---
+// 0. Health Check
+app.get('/ping', (req, res) => res.send('Nivorgo Backend is LIVE! 🍃'));
 
 // 1. Auth & OTP
 app.post('/register', async (req, res) => {
