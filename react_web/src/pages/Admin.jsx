@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const apiBase = 'http://localhost:5000';
+const apiBase = 'https://nivorgo-backend.onrender.com';
 
 const Admin = () => {
     const [orders, setOrders] = useState([]);

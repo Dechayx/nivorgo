@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 // Using the same API base as App.jsx
-const apiBase = 'http://localhost:5000';
+const apiBase = 'https://nivorgo-backend.onrender.com';
 
 const Profile = ({ user, setUser }) => { // Accept user and setUser to update local profile data
     const [orders, setOrders] = useState([]);
