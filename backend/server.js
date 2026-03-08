@@ -236,7 +236,10 @@ app.post('/contact', async (req, res) => {
             html: `<h3>New Message</h3><p><b>From:</b> ${name} (${email})</p><p><b>Message:</b> ${message}</p>`
         });
         res.json({ message: "Sent!" });
-    } catch (err) { res.status(500).json({ message: "Error" }); }
+    } catch (err) {
+        console.error("❌ Email Error:", err);
+        res.status(500).json({ message: "Failed to send message. Please ensure email credentials are correct." });
+    }
 });
 
 // 6. Admin API

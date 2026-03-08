@@ -170,6 +170,7 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
 
 function MainApp() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState(() => JSON.parse(localStorage.getItem('nivorgoCart') || '[]'));
   const [user, setUser] = useState(() => {
@@ -330,7 +331,7 @@ function MainApp() {
       alert("Order Confirmed! 🍃");
       const bsModal = window.bootstrap.Modal.getInstance(document.getElementById('checkoutModal'));
       bsModal.hide();
-      window.location.href = "/profile";
+      navigate("/profile");
     } catch (err) {
       alert("Order failed.");
     }
