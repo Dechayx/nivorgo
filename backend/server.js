@@ -80,14 +80,15 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // Specific for Gmail on cloud servers
+    port: 587,
+    secure: false, // TLS
     auth: {
         user: process.env.EMAIL_USER || 'nivorgo@gmail.com',
         pass: process.env.EMAIL_PASS || 'wbtwxmxbfkbdxaee'
     },
     tls: {
-        rejectUnauthorized: false // Helps avoid blocks from cloud providers like Render
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false
     }
 });
 
