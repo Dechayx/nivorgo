@@ -106,17 +106,29 @@ app.post('/register', async (req, res) => {
 
         const newUser = new User({ name, email, password: hashedPassword, otp, isVerified: false });
         await newUser.save();
+        console.log(`✅ User ${email} saved to DB, sending email...`);
 
-        await transporter.sendMail({
-            from: '"Nivorgo Ayurveda" <nivorgo@gmail.com>',
-            to: email,
-            subject: 'Verify your Nivorgo Account',
-            html: `<div style="font-family: Arial; padding: 20px;"><h2>Your OTP is: ${otp}</h2></div>`
-        });
-        res.status(201).json({ message: "OTP sent!" });
+        try {
+            await transporter.sendMail({
+                from: '"Nivorgo Ayurveda" <nivorgo@gmail.com>',
+                to: email,
+                subject: 'Verify your Nivorgo Account',
+                html: `<div style="font-family: Arial; padding: 20px; background-color: #f9f9f9; border-radius: 10px;">
+                        <h2 style="color: #4A5D45;">Welcome to Nivorgo!</h2>
+                        <p>Your verification code is:</p>
+                        <h1 style="letter-spacing: 5px; color: #B4846C;">${otp}</h1>
+                        <p>This code will expire shortly.</p>
+                      </div>`
+            });
+            console.log(`📧 OTP sent successfully to ${email}`);
+            res.status(201).json({ message: "OTP sent!" });
+        } catch (emailErr) {
+            console.error("❌ Email (Nodemailer) Error:", emailErr);
+            res.status(500).json({ message: "Registration successful, but failed to send OTP email. Please check your email settings." });
+        }
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Registration error." });
+        console.error("❌ Registration DB Error:", err);
+        res.status(500).json({ message: "Registration error: " + err.message });
     }
 });
 
