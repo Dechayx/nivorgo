@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 // Using the same API base as App.jsx
-const apiBase = 'https://nivorgo-backend.onrender.com';
+const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://api.nivorgo.com';
 
 const Profile = ({ user, setUser }) => { // Accept user and setUser to update local profile data
     const [orders, setOrders] = useState([]);
