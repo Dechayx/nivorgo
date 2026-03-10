@@ -79,19 +79,36 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Specific for Gmail on cloud servers
     auth: {
         user: process.env.EMAIL_USER || 'nivorgo@gmail.com',
         pass: process.env.EMAIL_PASS || 'wbtwxmxbfkbdxaee'
     },
-    connectionTimeout: 5000, // 5 seconds
-    greetingTimeout: 5000,
-    socketTimeout: 5000
+    tls: {
+        rejectUnauthorized: false // Helps avoid blocks from cloud providers like Render
+    }
 });
 
 // --- ROUTES ---
-// 0. Health Check
+// 0. Health Check & Test Email
 app.get('/ping', (req, res) => res.send('Nivorgo Backend is LIVE! 🍃'));
+
+app.get('/test-email', async (req, res) => {
+    try {
+        await transporter.sendMail({
+            from: '"Nivorgo Test" <nivorgo@gmail.com>',
+            to: 'nivorgo@gmail.com',
+            subject: 'Email Test Success! 🚀',
+            text: 'Your backend can now send emails from Render.'
+        });
+        res.json({ message: "Test email sent successfully to nivorgo@gmail.com!" });
+    } catch (err) {
+        console.error("❌ SMTP Error:", err);
+        res.status(500).json({ message: "SMTP Failed", details: err.message });
+    }
+});
 
 // 1. Auth & OTP
 app.post('/register', async (req, res) => {
