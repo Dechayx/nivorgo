@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 require('dotenv').config();
 
 const app = express();
@@ -77,20 +77,9 @@ const Order = mongoose.model('Order', new mongoose.Schema({
     createdAt: { type: Date, default: Date.now }
 }));
 
-// --- EMAIL CONFIGURATION ---
-const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // TLS
-    auth: {
-        user: process.env.EMAIL_USER || 'nivorgo@gmail.com',
-        pass: process.env.EMAIL_PASS || 'wbtwxmxbfkbdxaee'
-    },
-    tls: {
-        ciphers: 'SSLv3',
-        rejectUnauthorized: false
-    }
-});
+// --- EMAIL CONFIGURATION (Resend) ---
+const resend = new Resend(process.env.RESEND_API_KEY || 're_Ydrste1Y_DdpXWuavNWBA7SV71bq4pmqA');
+const FROM_EMAIL = 'onboarding@resend.dev'; // Change to 'Nivorgo <no-reply@nivorgo.com>' once domain is verified in Resend
 
 // --- ROUTES ---
 // 0. Health Check & Test Email
@@ -98,16 +87,17 @@ app.get('/ping', (req, res) => res.send('Nivorgo Backend is LIVE! 🍃'));
 
 app.get('/test-email', async (req, res) => {
     try {
-        await transporter.sendMail({
-            from: '"Nivorgo Test" <nivorgo@gmail.com>',
+        const { data, error } = await resend.emails.send({
+            from: FROM_EMAIL,
             to: 'nivorgo@gmail.com',
             subject: 'Email Test Success! 🚀',
-            text: 'Your backend can now send emails from Render.'
+            html: '<strong>Your backend can now send emails via Resend.</strong>'
         });
-        res.json({ message: "Test email sent successfully to nivorgo@gmail.com!" });
+        if (error) throw error;
+        res.json({ message: "Test email sent successfully!", data });
     } catch (err) {
-        console.error("❌ SMTP Error:", err);
-        res.status(500).json({ message: "SMTP Failed", details: err.message });
+        console.error("❌ Resend Error:", err);
+        res.status(500).json({ message: "Resend Failed", details: err.message });
     }
 });
 
@@ -128,8 +118,8 @@ app.post('/register', async (req, res) => {
         console.log(`✅ User ${email} saved to DB, sending email...`);
 
         try {
-            await transporter.sendMail({
-                from: '"Nivorgo Ayurveda" <nivorgo@gmail.com>',
+            const { data, error } = await resend.emails.send({
+                from: FROM_EMAIL,
                 to: email,
                 subject: 'Verify your Nivorgo Account',
                 html: `<div style="font-family: Arial; padding: 20px; background-color: #f9f9f9; border-radius: 10px;">
@@ -139,11 +129,12 @@ app.post('/register', async (req, res) => {
                         <p>This code will expire shortly.</p>
                       </div>`
             });
+            if (error) throw error;
             console.log(`📧 OTP sent successfully to ${email}`);
             res.status(201).json({ message: "OTP sent!" });
         } catch (emailErr) {
-            console.error("❌ Email (Nodemailer) Error:", emailErr);
-            res.status(500).json({ message: "Registration successful, but failed to send OTP email. Please check your email settings." });
+            console.error("❌ Resend Error:", emailErr);
+            res.status(500).json({ message: "Registration successful, but failed to send OTP email. Please check your Resend settings." });
         }
     } catch (err) {
         console.error("❌ Registration DB Error:", err);
@@ -273,16 +264,17 @@ app.put('/api/user/update', authenticateToken, async (req, res) => {
 app.post('/contact', async (req, res) => {
     const { name, email, message } = req.body;
     try {
-        await transporter.sendMail({
-            from: '"Nivorgo Website" <nivorgo@gmail.com>',
+        const { data, error } = await resend.emails.send({
+            from: FROM_EMAIL,
             to: 'nivorgo@gmail.com',
             subject: `🌿 Inquiry from ${name}`,
             html: `<h3>New Message</h3><p><b>From:</b> ${name} (${email})</p><p><b>Message:</b> ${message}</p>`
         });
+        if (error) throw error;
         res.json({ message: "Sent!" });
     } catch (err) {
-        console.error("❌ Email Error:", err);
-        res.status(500).json({ message: "Failed to send message. Please ensure email credentials are correct." });
+        console.error("❌ Resend Contact Error:", err);
+        res.status(500).json({ message: "Failed to send message. Please ensure Resend configuration is correct." });
     }
 });
 
