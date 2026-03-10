@@ -79,7 +79,7 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 
 // --- EMAIL CONFIGURATION (Resend) ---
 const resend = new Resend(process.env.RESEND_API_KEY || 're_Ydrste1Y_DdpXWuavNWBA7SV71bq4pmqA');
-const FROM_EMAIL = 'onboarding@resend.dev'; // Change to 'Nivorgo <no-reply@nivorgo.com>' once domain is verified in Resend
+const FROM_EMAIL = 'Nivorgo Ayurveda <no-reply@nivorgo.com>';
 
 // --- ROUTES ---
 // 0. Health Check & Test Email
