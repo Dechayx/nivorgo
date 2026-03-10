@@ -390,7 +390,7 @@ function MainApp() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/why-ayurveda" element={<Ayurveda />} />
         <Route path="/profile" element={
-          <Profile user={user} setUser={setUser} />
+          <Profile user={user} setUser={setUser} handleLogout={handleLogout} />
         } />
         <Route path="/admin-portal" element={<Admin />} />
       </Routes>

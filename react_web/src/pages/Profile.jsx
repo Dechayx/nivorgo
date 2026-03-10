@@ -4,7 +4,7 @@ import axios from 'axios';
 // Using the same API base as App.jsx
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://api.nivorgo.com';
 
-const Profile = ({ user, setUser }) => { // Accept user and setUser to update local profile data
+const Profile = ({ user, setUser, handleLogout }) => { // Accept user, setUser and handleLogout
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [address, setAddress] = useState(user?.address || {});
@@ -106,9 +106,14 @@ const Profile = ({ user, setUser }) => { // Accept user and setUser to update lo
                         ) : (
                             <p className="small text-muted">No address saved yet.</p>
                         )}
-                        <button className="btn btn-sm btn-outline-success mt-3" onClick={() => setEditMode(true)}>
-                            Edit Profile
-                        </button>
+                        <div className="d-flex gap-2 mt-3">
+                            <button className="btn btn-sm btn-outline-success flex-grow-1" onClick={() => setEditMode(true)}>
+                                Edit Profile
+                            </button>
+                            <button className="btn btn-sm btn-outline-danger flex-grow-1" onClick={handleLogout}>
+                                Logout
+                            </button>
+                        </div>
                     </div>
                 </div>
 
