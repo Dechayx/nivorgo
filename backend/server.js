@@ -79,13 +79,14 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 
 // --- EMAIL CONFIGURATION ---
 const transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // use SSL
+    service: 'gmail',
     auth: {
         user: process.env.EMAIL_USER || 'nivorgo@gmail.com',
         pass: process.env.EMAIL_PASS || 'wbtwxmxbfkbdxaee'
-    }
+    },
+    connectionTimeout: 5000, // 5 seconds
+    greetingTimeout: 5000,
+    socketTimeout: 5000
 });
 
 // --- ROUTES ---
