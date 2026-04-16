@@ -32,7 +32,7 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                         </div>
                         <div className="col-lg-6" data-aos="zoom-in">
                             <div className="about-image-frame">
-                                <img src="/assets/bg.webp" className="img-fluid rounded" alt="Nivorgo" loading="lazy" />
+                                <img src="/assets/new.png" className="img-fluid rounded" alt="Nivorgo" loading="lazy" />
                             </div>
                         </div>
                     </div>

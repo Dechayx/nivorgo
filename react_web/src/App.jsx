@@ -17,6 +17,8 @@ import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import AboutUs from './pages/AboutUs';
 import Ayurveda from './pages/Ayurveda';
+import Product from './pages/product';
+import MoreInfo from './pages/moreinfo';
 
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://api.nivorgo.com';
 const images = ['/assets/1.webp', '/assets/2.webp', '/assets/3.webp', '/assets/4.webp', '/assets/5.webp'];
@@ -95,7 +97,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
           <div className="navbar-nav mx-auto text-center">
             <a className="nav-link px-3" href="/">Home</a>
             <Link className="nav-link px-3" to="/about">About</Link>
-            <a className="nav-link px-3" href="/#products">Products</a>
+            <Link className="nav-link px-3" to="/products">Products</Link>
             <Link className="nav-link px-3" to="/why-ayurveda">Why Ayurveda</Link>
             <a className="nav-link px-3" href="/#contact">Contact</a>
           </div>
@@ -307,14 +309,26 @@ function MainApp() {
     }
   };
 
-  // Order
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
+
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
     if (!user) return alert("Please login first");
+
+    const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+
     const payload = {
       email: user.email,
       items: cart,
-      total: cart.reduce((sum, item) => sum + item.price, 0),
+      total: totalAmount,
       address: {
         street: checkoutData.street,
         city: checkoutData.city,
@@ -323,17 +337,67 @@ function MainApp() {
         mobile_number: checkoutData.mobile,
       }
     };
+
     try {
-      await axios.post(`${apiBase}/place-order`, payload, {
+      const res = await loadRazorpayScript();
+      if (!res) {
+        alert("Razorpay SDK failed to load. Are you online?");
+        return;
+      }
+
+      // Create order via backend
+      const { data: orderData } = await axios.post(`${apiBase}/create-razorpay-order`, { total: totalAmount }, {
         headers: { 'Authorization': `Bearer ${user.token}` }
       });
-      setCart([]);
-      alert("Order Confirmed! 🍃");
-      const bsModal = window.bootstrap.Modal.getInstance(document.getElementById('checkoutModal'));
-      bsModal.hide();
-      navigate("/profile");
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_dummykeyid123', // Enter the Key ID generated from the Dashboard
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Nivorgo Ayurveda",
+        description: "Ayurvedic products purchase",
+        order_id: orderData.id,
+        handler: async function (response) {
+          const verifyPayload = {
+            ...payload,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+          };
+
+          try {
+            await axios.post(`${apiBase}/verify-payment`, verifyPayload, {
+              headers: { 'Authorization': `Bearer ${user.token}` }
+            });
+            setCart([]);
+            alert("Payment Successful & Order Confirmed! 🍃");
+            const bsModal = window.bootstrap.Modal.getInstance(document.getElementById('checkoutModal'));
+            if (bsModal) bsModal.hide();
+            navigate("/profile");
+          } catch (verifyErr) {
+            alert("Payment Verification Failed!");
+            console.error(verifyErr);
+          }
+        },
+        prefill: {
+          name: user.name || "Customer",
+          email: user.email || "",
+          contact: checkoutData.mobile || ""
+        },
+        theme: {
+          color: "#4A5D45" // Match site aesthetics
+        }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        alert("Payment Failed - " + response.error.description);
+      });
+      rzp.open();
+
     } catch (err) {
-      alert("Order failed.");
+      console.error(err);
+      alert("Failed to initiate payment.");
     }
   };
 
@@ -389,6 +453,16 @@ function MainApp() {
         } />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/why-ayurveda" element={<Ayurveda />} />
+        <Route path="/products" element={
+          <Product
+            products={products}
+            addToBag={addToBag}
+            openQuickView={openQuickView}
+            formatPrice={formatPrice}
+            images={images}
+          />
+        } />
+        <Route path="/moreinfo/:id" element={<MoreInfo />} />
         <Route path="/profile" element={
           <Profile user={user} setUser={setUser} handleLogout={handleLogout} />
         } />

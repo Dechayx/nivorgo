@@ -228,6 +228,7 @@ h6,
   transition: all 0.4s ease;
   background: transparent;
   padding: 20px 0;
+  height: 130px;
 }
 
 .custom-navbar.scrolled {

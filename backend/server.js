@@ -4,11 +4,19 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Resend } = require('resend');
+const crypto = require('crypto');
+const Razorpay = require('razorpay');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 const JWT_SECRET = process.env.JWT_SECRET || 'nivorgo_super_secret_key_2026';
+
+// Initialize Razorpay
+const razorpay = new Razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_dummykeyid123',
+    key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummysecret1234567890',
+});
 
 // --- MIDDLEWARE ---
 // Debug Logger for Production
@@ -239,6 +247,71 @@ app.post('/place-order', authenticateToken, async (req, res) => {
 
         res.status(201).json({ message: "Order placed successfully" });
     } catch (err) { res.status(500).json({ message: "Order failed" }); }
+});
+
+app.post('/create-razorpay-order', authenticateToken, async (req, res) => {
+    try {
+        const { total } = req.body;
+        const options = {
+            amount: total * 100, // amount in paise
+            currency: 'INR',
+            receipt: `receipt_order_${Date.now()}`
+        };
+
+        const order = await razorpay.orders.create(options);
+        res.json(order);
+    } catch (err) {
+        console.error("Razorpay order error:", err);
+        res.status(500).json({ message: "Failed to create Razorpay order" });
+    }
+});
+
+app.post('/verify-payment', authenticateToken, async (req, res) => {
+    try {
+        const {
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,
+            email,
+            items,
+            total,
+            address
+        } = req.body;
+
+        const sign = razorpay_order_id + "|" + razorpay_payment_id;
+        const expectedSign = crypto
+            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || 'dummysecret1234567890')
+            .update(sign.toString())
+            .digest("hex");
+
+        if (razorpay_signature === expectedSign) {
+            // Payment is valid
+            const user = await User.findOne({ email: email.toLowerCase() });
+            if (!user) return res.status(404).json({ message: "User not found" });
+
+            const newOrder = new Order({
+                userId: user._id,
+                items,
+                totalAmount: total,
+                shippingAddress: address,
+                status: 'Paid'
+            });
+
+            await newOrder.save();
+
+            await User.findOneAndUpdate(
+                { email: email.toLowerCase() },
+                { $set: { cart: [], address: address } }
+            );
+
+            res.status(200).json({ message: "Payment verified and order placed successfully", orderId: newOrder._id });
+        } else {
+            res.status(400).json({ message: "Invalid signature sent!" });
+        }
+    } catch (error) {
+        console.error("Payment verification error:", error);
+        res.status(500).json({ message: "Internal Server Error during verification!" });
+    }
 });
 
 // ... (Contact and Admin routes remain same)
