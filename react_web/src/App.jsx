@@ -120,7 +120,7 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
           <div className="contact-details mt-4">
             <div className="d-flex mb-3"><span className="me-3">📍</span><p className="small mb-0">Pune, Maharashtra, India</p></div>
             <div className="d-flex mb-3"><span className="me-3">✉️</span><p className="small mb-0">nivorgo@gmail.com</p></div>
-            <div className="d-flex mb-3"><span className="me-3">📞</span><p className="small mb-0">+91 80820 60888</p></div>
+            <div className="d-flex mb-3"><span className="me-3">📞</span><p className="small mb-0">+91 98332 89760</p></div>
           </div>
         </div>
         <div className="col-lg-8" data-aos="fade-up" data-aos-delay="200">
