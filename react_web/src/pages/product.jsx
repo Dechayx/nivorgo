@@ -2,8 +2,6 @@ import React, { useEffect } from 'react';
 import AOS from 'aos';
 import { Link } from 'react-router-dom';
 
-import { catalogProducts } from '../data/catalogData';
-
 const Product = ({ products, addToBag, openQuickView, formatPrice, images }) => {
     useEffect(() => {
         AOS.init({ duration: 1000, easing: 'ease-in-out', once: true });
@@ -26,7 +24,7 @@ const Product = ({ products, addToBag, openQuickView, formatPrice, images }) => 
 
             <section className="section-products-zigzag" style={{ backgroundColor: '#F9F7F2', padding: '100px 0' }}>
                 <div className="container">
-                    {catalogProducts.map((item, i) => (
+                    {products.map((item, i) => (
                         <div key={i} className={`row align-items-center mb-5 g-5 ${i % 2 !== 0 ? 'flex-md-row-reverse' : ''}`} data-aos={i % 2 === 0 ? "fade-right" : "fade-left"}>
                             <div className="col-lg-6">
                                 <div className="product-page-img shadow-lg" style={{ background: '#fff' }}>

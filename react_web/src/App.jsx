@@ -19,16 +19,15 @@ import AboutUs from './pages/AboutUs';
 import Ayurveda from './pages/Ayurveda';
 import Product from './pages/product';
 import MoreInfo from './pages/moreinfo';
+import { catalogProducts } from './data/catalogData';
 
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://api.nivorgo.com';
 const images = ['/assets/1.webp', '/assets/2.webp', '/assets/3.webp', '/assets/4.webp', '/assets/5.webp'];
 
-const defaultProducts = [{ name: 'Keshypushti Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Deep nourishment for volume & vitality.', benefits: ['Volume', 'Vitality'] },
-{ name: 'Pratidarunaka Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Effective relief from dandruff & itchiness.', benefits: ['Anti-Dandruff', 'Scalp Care'] },
-{ name: 'Prati Palitya Hair Oil', category: 'Ayurvedic Hair Oils', price: 1699, mrp: 1999, desc: 'Prevents premature greying & restores shine.', benefits: ['Restores Pigment', 'Shine'] },
-{ name: 'Shirodhara Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Relieves stress & promotes deep sleep.', benefits: ['Better Sleep', 'Calming'] },
-{ name: 'Keshyadharni Hair Oil', category: 'Ayurvedic Hair Oils', price: 1609, mrp: 1909, desc: 'Strengthens roots to reduce hair fall.', benefits: ['Strength', 'Reduced Breakage'] }
-];
+const defaultProducts = catalogProducts.map(p => ({
+  ...p,
+  name: p.title
+}));
 
 // --- Sub-Components (Internal for simplicity) ---
 
@@ -220,13 +219,19 @@ function MainApp() {
   }, [cart]);
 
   const fetchProducts = async () => {
+    // We prioritize catalog products for now as per user request
+    console.log('Using catalog products as source');
+    setProducts(defaultProducts);
+    
+    /* 
     try {
       const res = await axios.get(`${apiBase}/products`);
-      setProducts(res.data);
+      // Optional: merge or overwrite if API is desired
+      // setProducts(res.data);
     } catch (err) {
-      console.warn('Using default products due to API error');
-      setProducts(defaultProducts);
+      console.warn('API error, sticking with catalog data');
     }
+    */
   };
 
   const formatPrice = (price) => {
@@ -565,7 +570,7 @@ function MainApp() {
                       </ul>
                     </div>
                     <button
-                      className="btn btn-success w-100 py-3 text-uppercase fw-bold"
+                      className="btn btn-success w-100 py-3 text-uppercase fw-bold mb-3"
                       style={{ letterSpacing: '2px', borderRadius: '0' }}
                       onClick={() => {
                         addToBag(quickViewProduct);
@@ -574,6 +579,16 @@ function MainApp() {
                     >
                       Add to Collection
                     </button>
+                    <Link 
+                      to={`/moreinfo/${quickViewProduct.id}`}
+                      className="btn btn-outline-success w-100 py-2 text-uppercase fw-bold"
+                      style={{ letterSpacing: '1px', borderRadius: '0', fontSize: '0.8rem' }}
+                      onClick={() => {
+                        window.bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();
+                      }}
+                    >
+                      View Full Details
+                    </Link>
                   </div>
                 </div>
               )}

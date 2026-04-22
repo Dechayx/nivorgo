@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -57,7 +58,7 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                             loop={true}
                         >
                             {products.map((p, i) => {
-                                const imgUrl = images[i % images.length];
+                                const imgUrl = p.img ? `/assets/${p.img}` : images[i % images.length];
                                 return (
                                     <SwiperSlide key={i}>
                                         <div className="product-card">
@@ -79,7 +80,11 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                                                 </div>
                                             </div>
                                             <div className="product-info">
-                                                <h3 className="font-serif">{p.name}</h3>
+                                                <h3 className="font-serif">
+                                                    <Link to={`/moreinfo/${p.id}`} className="text-decoration-none text-dark">
+                                                        {p.name}
+                                                    </Link>
+                                                </h3>
                                                 <div className="d-flex justify-content-center align-items-center gap-2">
                                                     {p.mrp && <span className="text-muted text-decoration-line-through" style={{ fontSize: '0.9rem' }}>{formatPrice(p.mrp)}</span>}
                                                     <p className="price-tag mb-0">{formatPrice(p.price)}</p>
