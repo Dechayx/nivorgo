@@ -550,3 +550,26 @@ h6,
   filter: grayscale(0%);
   /* Reveal color on hover */
 }
+
+/* --- DISCOUNT BADGE --- */
+.discount-badge-overlay {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background-color: #fff;
+  color: #1C2820;
+  padding: 5px 12px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  z-index: 5;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  border: 1px solid #eee;
+  text-transform: uppercase;
+}
+
+.product-card:hover .discount-badge-overlay {
+  background-color: #1C2820;
+  color: #fff;
+  border-color: #1C2820;
+}

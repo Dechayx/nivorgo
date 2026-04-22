@@ -40,6 +40,16 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                 </div>
             </section>
 
+            {/* Special Offers Banner */}
+            <section className="promo-section py-5" style={{ backgroundColor: '#1C2820', color: '#fff' }}>
+                <div className="container py-4 text-center">
+                    <span className="category-tag text-light opacity-75 mb-3" style={{ letterSpacing: '5px' }}>Seasonal Wellness</span>
+                    <h2 className="display-4 font-serif mb-4">Celebrate Your Ritual<br />with Up to 20% Off</h2>
+                    <p className="lead mb-5 opacity-75">Restore your natural balance with our handcrafted therapy oils.<br />Limited quantities available for this harvest.</p>
+                    <a href="#products" className="btn btn-outline-light px-5 py-3" style={{ borderRadius: '0', letterSpacing: '2px' }}>SHOP THE SALE</a>
+                </div>
+            </section>
+
             {/* Products */}
             <section id="products" className="section-products">
                 <div className="container">
@@ -63,6 +73,11 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                                     <SwiperSlide key={i}>
                                         <div className="product-card">
                                             <div className="product-image-wrapper">
+                                                {p.mrp && p.price && (
+                                                    <div className="discount-badge-overlay">
+                                                        {Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF
+                                                    </div>
+                                                )}
                                                 <img src={imgUrl} alt={p.name} className="main-img" loading="lazy" />
                                                 <div className="product-actions">
                                                     <button
@@ -86,7 +101,12 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                                                     </Link>
                                                 </h3>
                                                 <div className="d-flex justify-content-center align-items-center gap-2">
-                                                    {p.mrp && <span className="text-muted text-decoration-line-through" style={{ fontSize: '0.9rem' }}>{formatPrice(p.mrp)}</span>}
+                                                    {p.mrp && (
+                                                        <>
+                                                            <span className="text-muted text-decoration-line-through" style={{ fontSize: '0.85rem' }}>{formatPrice(p.mrp)}</span>
+                                                            <span className="text-success fw-bold small">({Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF)</span>
+                                                        </>
+                                                    )}
                                                     <p className="price-tag mb-0">{formatPrice(p.price)}</p>
                                                 </div>
                                                 <p className="product-card-desc">{p.desc}</p>

@@ -632,6 +632,17 @@ function MainApp() {
                   value={checkoutData.mobile} onChange={(e) => setCheckoutData({ ...checkoutData, mobile: e.target.value.replace(/[^0-9]/g, '') })}
                 />
               </div>
+              <div className="mb-4">
+                <label className="form-label">Discount Code</label>
+                <div className="input-group">
+                  <input type="text" className="form-control premium-input border-end-0" placeholder="Enter code (e.g. NIVORGO10)" />
+                  <button className="btn btn-outline-dark" type="button" style={{ borderRadius: '0' }}>APPLY</button>
+                </div>
+              </div>
+              <div className="d-flex justify-content-between mb-2">
+                <span className="text-muted">Subtotal:</span>
+                <span>{formatPrice(cart.reduce((sum, item) => sum + item.price, 0))}</span>
+              </div>
               <div className="d-flex justify-content-between mb-4">
                 <span>Total Amount:</span>
                 <strong>{formatPrice(cart.reduce((sum, item) => sum + item.price, 0))}</strong>
