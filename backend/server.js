@@ -340,6 +340,7 @@ app.post('/contact', async (req, res) => {
         const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,
             to: 'nivorgo@gmail.com',
+            reply_to: email,
             subject: `🌿 Inquiry from ${name}`,
             html: `<h3>New Message</h3><p><b>From:</b> ${name} (${email})</p><p><b>Message:</b> ${message}</p>`
         });

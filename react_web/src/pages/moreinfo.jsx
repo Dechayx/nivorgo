@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { catalogProducts } from '../data/catalogData';
 
-const MoreInfo = () => {
+const MoreInfo = ({ products, addToBag, openQuickView, formatPrice, images }) => {
     const { id } = useParams();
     const product = catalogProducts.find(p => p.id === id);
     const [mainImage, setMainImage] = useState(product?.img || '');
@@ -21,9 +21,7 @@ const MoreInfo = () => {
         );
     }
 
-    const formatPrice = (price) => {
-        return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
-    };
+
 
     const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
 
@@ -102,8 +100,18 @@ const MoreInfo = () => {
                             </div>
 
                             <div className="action-buttons d-flex gap-3 mb-4">
-                                <button className="btn btn-outline-dark flex-grow-1 py-3 fw-bold" style={{ borderRadius: '0' }}>ADD TO BAG</button>
-                                <button className="btn btn-success flex-grow-1 py-3 fw-bold" style={{ borderRadius: '0', backgroundColor: '#3A4B36' }}>BUY NOW</button>
+                                <button
+                                  className="btn btn-outline-dark flex-grow-1 py-3 fw-bold"
+                                  style={{ borderRadius: '0' }}
+                                  onClick={() => addToBag(product)}
+                                >ADD TO BAG</button>
+                                <button
+                                  className="btn btn-success flex-grow-1 py-3 fw-bold"
+                                  style={{ borderRadius: '0', backgroundColor: '#3A4B36' }}
+                                  data-bs-toggle="offcanvas"
+                                  data-bs-target="#cartOffcanvas"
+                                  onClick={() => addToBag(product)}
+                                >BUY NOW</button>
                             </div>
                         </div>
                     </div>

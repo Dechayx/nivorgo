@@ -233,7 +233,7 @@ h6,
 
 .custom-navbar.scrolled {
   padding: 15px 0;
-  background-image: url('/assets/image.png');
+  background-image: url('/assets/img3.png');
   background-size: cover;
   background-position: center;
   /* background: rgba(157, 167, 160, 0.95);  Removed solid color */
@@ -525,8 +525,8 @@ h6,
 
 /* Nav Icons */
 .nav-icon-img {
-  width: 20px;
-  height: 20px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   transition: transform 0.3s ease;
 }
@@ -563,7 +563,7 @@ h6,
   font-weight: 800;
   letter-spacing: 1px;
   z-index: 5;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   border: 1px solid #eee;
   text-transform: uppercase;
 }

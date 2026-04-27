@@ -43,7 +43,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
 
   return (
     <nav className={`navbar navbar-expand-lg navbar-dark fixed-top custom-navbar ${isScrolled || location.pathname !== '/' ? 'scrolled' : ''}`}
-      style={location.pathname !== '/' ? { backgroundImage: "url('/assets/image.png')", backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+      style={location.pathname !== '/' ? { backgroundImage: "url('/assets/img3.png')", backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
       <div className="container d-flex flex-wrap align-items-center justify-content-between">
         <Link className="navbar-brand me-auto d-flex align-items-center gap-2" to="/">
           <img src="/assets/nivorgo logo Green.png" alt="Nivorgo Logo" className="nav-logo" />
@@ -153,7 +153,7 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
         <div className="col-md-6 text-center text-md-start"><p className="small text-muted">© 2026 NIVORGO. All Rights Reserved.</p></div>
         <div className="col-md-6 text-center text-md-end">
           <div className="social-links d-flex align-items-center justify-content-end">
-            <a href="#" className="me-3 text-decoration-none">
+            <a href="https://www.instagram.com/niv_orgo?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" className="me-3 text-decoration-none">
               <img src="/assets/image copy.png" alt="Instagram" className="footer-icon-img" />
             </a>
             <a href="#" className="me-3 text-decoration-none">
@@ -195,6 +195,10 @@ function MainApp() {
   const [otp, setOtp] = useState('');
   const [checkoutData, setCheckoutData] = useState({ street: '', city: '', zip: '', state: 'Maharashtra', mobile: '' });
   const [contactData, setContactData] = useState({ name: '', email: '', message: '' });
+  const [discountCode, setDiscountCode] = useState('');
+  const [discountRate, setDiscountRate] = useState(0);
+  const [discountMessage, setDiscountMessage] = useState('');
+  const [processing, setProcessing] = useState(false);
 
   useEffect(() => {
     AOS.init({ duration: 1000, easing: 'ease-in-out', once: true });
@@ -222,7 +226,7 @@ function MainApp() {
     // We prioritize catalog products for now as per user request
     console.log('Using catalog products as source');
     setProducts(defaultProducts);
-    
+
     /* 
     try {
       const res = await axios.get(`${apiBase}/products`);
@@ -326,14 +330,19 @@ function MainApp() {
 
   const handlePlaceOrder = async (e) => {
     e.preventDefault();
-    if (!user) return alert("Please login first");
+    if (processing) return;
+    setProcessing(true);
+    if (!user) { setProcessing(false); return alert("Please login first"); }
 
-    const totalAmount = cart.reduce((sum, item) => sum + item.price, 0);
+    const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+    const discountedTotal = Math.round(cartTotal * (1 - discountRate));
+    const totalAmount = discountedTotal;
 
     const payload = {
       email: user.email,
       items: cart,
       total: totalAmount,
+      discount: discountRate,
       address: {
         street: checkoutData.street,
         city: checkoutData.city,
@@ -404,6 +413,7 @@ function MainApp() {
       console.error(err);
       alert("Failed to initiate payment.");
     }
+    setProcessing(false);
   };
 
   // Contact
@@ -417,7 +427,20 @@ function MainApp() {
       alert("Failed to send message.");
     }
   };
-
+  const applyDiscount = () => {
+    const discounts = {
+      NIVORGO10: 0.10,
+      SPRING20: 0.20,
+    };
+    const code = discountCode.trim().toUpperCase();
+    if (discounts[code]) {
+      setDiscountRate(discounts[code]);
+      setDiscountMessage(`✅ ${code} applied – ${discounts[code] * 100}% off`);
+    } else {
+      setDiscountRate(0);
+      setDiscountMessage('❌ Invalid or expired code');
+    }
+  };
   const openQuickView = (product, img) => {
     setQuickViewProduct({ ...product, img });
 
@@ -467,7 +490,12 @@ function MainApp() {
             images={images}
           />
         } />
-        <Route path="/moreinfo/:id" element={<MoreInfo />} />
+        <Route path="/moreinfo/:id" element={<MoreInfo
+          products={products}
+          addToBag={addToBag}
+          openQuickView={openQuickView}
+          formatPrice={formatPrice}
+          images={images} />} />
         <Route path="/profile" element={
           <Profile user={user} setUser={setUser} handleLogout={handleLogout} />
         } />
@@ -579,7 +607,7 @@ function MainApp() {
                     >
                       Add to Collection
                     </button>
-                    <Link 
+                    <Link
                       to={`/moreinfo/${quickViewProduct.id}`}
                       className="btn btn-outline-success w-100 py-2 text-uppercase fw-bold"
                       style={{ letterSpacing: '1px', borderRadius: '0', fontSize: '0.8rem' }}
@@ -635,19 +663,41 @@ function MainApp() {
               <div className="mb-4">
                 <label className="form-label">Discount Code</label>
                 <div className="input-group">
-                  <input type="text" className="form-control premium-input border-end-0" placeholder="Enter code (e.g. NIVORGO10)" />
-                  <button className="btn btn-outline-dark" type="button" style={{ borderRadius: '0' }}>APPLY</button>
+                  <input
+                    type="text"
+                    className="form-control premium-input border-end-0"
+                    placeholder="Enter code (e.g. NIVORGO10)"
+                    value={discountCode}
+                    onChange={(e) => setDiscountCode(e.target.value)}
+                  />
+                  <button
+                    className="btn btn-outline-dark"
+                    type="button"
+                    style={{ borderRadius: '0' }}
+                    onClick={applyDiscount}
+                  >
+                    APPLY
+                  </button>
                 </div>
+                {discountMessage && <div className="mt-2">{discountMessage}</div>}
               </div>
               <div className="d-flex justify-content-between mb-2">
                 <span className="text-muted">Subtotal:</span>
                 <span>{formatPrice(cart.reduce((sum, item) => sum + item.price, 0))}</span>
               </div>
+              {discountRate > 0 && (
+                <div className="d-flex justify-content-between mb-2 text-success">
+                  <span>Discount ({discountRate * 100}%):</span>
+                  <span>-{formatPrice(cart.reduce((sum, item) => sum + item.price, 0) * discountRate)}</span>
+                </div>
+              )}
               <div className="d-flex justify-content-between mb-4">
                 <span>Total Amount:</span>
-                <strong>{formatPrice(cart.reduce((sum, item) => sum + item.price, 0))}</strong>
+                <strong>{formatPrice(Math.round(cart.reduce((sum, item) => sum + item.price, 0) * (1 - discountRate)))}</strong>
               </div>
-              <button type="submit" className="btn btn-success w-100 py-3">PLACE ORDER</button>
+              <button type="submit" className="btn btn-success w-100 py-3" disabled={processing}>
+                {processing ? 'Processing...' : 'PLACE ORDER'}
+              </button>
             </form>
           </div>
         </div>
