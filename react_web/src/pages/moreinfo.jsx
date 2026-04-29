@@ -101,16 +101,16 @@ const MoreInfo = ({ products, addToBag, openQuickView, formatPrice, images }) =>
 
                             <div className="action-buttons d-flex gap-3 mb-4">
                                 <button
-                                  className="btn btn-outline-dark flex-grow-1 py-3 fw-bold"
-                                  style={{ borderRadius: '0' }}
-                                  onClick={() => addToBag(product)}
+                                    className="btn btn-outline-dark flex-grow-1 py-3 fw-bold"
+                                    style={{ borderRadius: '0' }}
+                                    onClick={() => addToBag(product)}
                                 >ADD TO BAG</button>
                                 <button
-                                  className="btn btn-success flex-grow-1 py-3 fw-bold"
-                                  style={{ borderRadius: '0', backgroundColor: '#3A4B36' }}
-                                  data-bs-toggle="offcanvas"
-                                  data-bs-target="#cartOffcanvas"
-                                  onClick={() => addToBag(product)}
+                                    className="btn btn-success flex-grow-1 py-3 fw-bold"
+                                    style={{ borderRadius: '0', backgroundColor: '#3A4B36' }}
+                                    data-bs-toggle="offcanvas"
+                                    data-bs-target="#cartOffcanvas"
+                                    onClick={() => addToBag(product)}
                                 >BUY NOW</button>
                             </div>
                         </div>

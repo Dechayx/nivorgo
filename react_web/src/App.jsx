@@ -243,7 +243,7 @@ function MainApp() {
   };
 
   const addToBag = (product) => {
-    const newItem = { name: product.name, price: product.price };
+    const newItem = { name: product.title || product.name, price: product.price };
     setCart([...cart, newItem]);
     const cartEl = document.getElementById('cartOffcanvas');
     if (cartEl) {
