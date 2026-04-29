@@ -24,6 +24,11 @@ body {
   overflow-x: hidden;
 }
 
+.product-page-wrapper {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 /* Force Gotham-like styling everywhere */
 h1,
 h2,

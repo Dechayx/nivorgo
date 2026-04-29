@@ -25,7 +25,7 @@ const Product = ({ products, addToBag, openQuickView, formatPrice, images }) => 
             <section className="section-products-zigzag" style={{ backgroundColor: '#F9F7F2', padding: '100px 0' }}>
                 <div className="container">
                     {products.map((item, i) => (
-                        <div key={i} className={`row align-items-center mb-5 g-5 ${i % 2 !== 0 ? 'flex-md-row-reverse' : ''}`} data-aos={i % 2 === 0 ? "fade-right" : "fade-left"}>
+                        <div key={i} className={`row align-items-center mb-5 g-4 g-lg-5 ${i % 2 !== 0 ? 'flex-md-row-reverse' : ''}`} data-aos={i % 2 === 0 ? "fade-right" : "fade-left"}>
                             <div className="col-lg-6">
                                 <div className="product-page-img shadow-lg" style={{ background: '#fff' }}>
                                     <img 
