@@ -21,6 +21,7 @@ body {
   line-height: 1.6;
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 /* Force Gotham-like styling everywhere */
@@ -228,7 +229,7 @@ h6,
   transition: all 0.4s ease;
   background: transparent;
   padding: 20px 0;
-  height: 130px;
+  min-height: 130px;
 }
 
 .custom-navbar.scrolled {
@@ -249,13 +250,12 @@ h6,
 }
 
 .navbar-nav .nav-link {
-  font-weight: 1200;
+  font-weight: 800;
 
 
   font-size: 1.2rem;
-  margin: 2px;
-  color: #111 !important;
 
+  color: #111 !important;
 }
 
 .navbar-brand {
@@ -275,19 +275,37 @@ h6,
   transition: all 0.3s ease;
 }
 
-.brand-text {
-  font-weight: 900 !important;
-  font-family: 'Times New Roman', Times, serif;
-  font-size: 1.8rem;
-  margin-left: 50px;
+.brand-text-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+.nav-icon-img {
+  height: 35px;
+  width: 35px;
+  object-fit: contain;
 }
 
 @media (max-width: 991px) {
   .nav-logo {
     position: relative;
-    height: 60px;
+    height: 40px;
     left: 0;
-    margin-right: 10px;
+    margin-right: 5px;
+  }
+
+  .brand-text-img {
+    height: 25px;
+  }
+
+  .nav-icon-img {
+    height: 22px;
+    width: 22px;
+  }
+
+  .mobile-nav-icons {
+    gap: 0.5rem !important;
   }
 
   .brand-text {
@@ -296,8 +314,13 @@ h6,
   }
 
   .custom-navbar {
-    background: #fff;
     padding: 10px 0;
+    min-height: auto;
+  }
+
+  .navbar-nav .nav-link {
+    font-size: 1rem;
+    padding: 10px 15px;
   }
 
   .custom-navbar .nav-link,

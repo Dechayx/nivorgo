@@ -33,6 +33,7 @@ const defaultProducts = catalogProducts.map(p => ({
 
 const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isNavOpen, setIsNavOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -42,8 +43,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
   }, []);
 
   return (
-    <nav className={`navbar navbar-expand-lg navbar-dark fixed-top custom-navbar ${isScrolled || location.pathname !== '/' ? 'scrolled' : ''}`}
-      style={location.pathname !== '/' ? { backgroundImage: "url('/assets/img3.png')", backgroundSize: 'cover', backgroundPosition: 'center' } : {}}>
+    <nav className={`navbar navbar-expand-lg navbar-dark fixed-top custom-navbar ${isScrolled || location.pathname !== '/' ? 'scrolled' : ''}`}>
       <div className="container d-flex flex-wrap align-items-center justify-content-between">
         <Link className="navbar-brand me-auto d-flex align-items-center gap-2" to="/">
           <img src="/assets/nivorgo logo Green.png" alt="Nivorgo Logo" className="nav-logo" />
@@ -87,18 +87,18 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
         </div>
 
         {/* Hamburger (Mobile: Pos 3) */}
-        <button className="navbar-toggler border-0 order-2" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button onClick={() => setIsNavOpen(!isNavOpen)} className="navbar-toggler border-0 order-2" type="button" aria-controls="navbarContent" aria-expanded={isNavOpen} aria-label="Toggle navigation">
           <span className="navbar-toggler-icon"></span>
         </button>
 
         {/* Menu (Mobile: Pos 4 (Order 3 but width 100% forces break), Desktop: Pos 2) */}
-        <div className="collapse navbar-collapse order-3 order-lg-2" id="navbarContent">
+        <div className={`collapse navbar-collapse order-3 order-lg-2 ${isNavOpen ? 'show' : ''}`} id="navbarContent">
           <div className="navbar-nav mx-auto text-center">
-            <a className="nav-link px-3" href="/">Home</a>
-            <Link className="nav-link px-3" to="/about">About</Link>
-            <Link className="nav-link px-3" to="/products">Products</Link>
-            <Link className="nav-link px-3" to="/why-ayurveda">Why Ayurveda</Link>
-            <a className="nav-link px-3" href="/#contact">Contact</a>
+            <Link className="nav-link px-3" to="/" onClick={() => setIsNavOpen(false)}>Home</Link>
+            <Link className="nav-link px-3" to="/about" onClick={() => setIsNavOpen(false)}>About</Link>
+            <Link className="nav-link px-3" to="/products" onClick={() => setIsNavOpen(false)}>Products</Link>
+            <Link className="nav-link px-3" to="/why-ayurveda" onClick={() => setIsNavOpen(false)}>Why Ayurveda</Link>
+            <a className="nav-link px-3" href="/#contact" onClick={() => setIsNavOpen(false)}>Contact</a>
           </div>
         </div>
       </div>
