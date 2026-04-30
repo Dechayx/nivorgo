@@ -251,7 +251,7 @@ h6,
 .custom-navbar.scrolled .nav-link,
 .custom-navbar.scrolled .navbar-brand,
 .custom-navbar.scrolled .btn-link {
-  color: #111 !important;
+  color: #040404 !important;
 }
 
 .navbar-nav .nav-link {
@@ -260,7 +260,7 @@ h6,
 
   font-size: 1.2rem;
 
-  color: #111 !important;
+  color: #d3caca !important;
 }
 
 .navbar-brand {

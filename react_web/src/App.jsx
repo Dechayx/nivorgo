@@ -332,7 +332,17 @@ function MainApp() {
     e.preventDefault();
     if (processing) return;
     setProcessing(true);
-    if (!user) { setProcessing(false); return alert("Please login first"); }
+    if (!user) {
+      setProcessing(false);
+      // Open login modal and switch to login section
+      setAuthSection('login');
+      const modalEl = document.getElementById('authModal');
+      if (modalEl && window.bootstrap) {
+        const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+      }
+      return;
+    }
 
     const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
     const discountedTotal = Math.round(cartTotal * (1 - discountRate));
@@ -543,7 +553,18 @@ function MainApp() {
             className="btn btn-success w-100 py-3"
             onClick={() => {
               if (cart.length === 0) return alert("Bag is empty");
-              if (!user) return alert("Please Login First");
+              if (!user) {
+                setAuthSection('login');
+                const modalEl = document.getElementById('authModal');
+                if (modalEl && window.bootstrap) {
+                  const cartOffcanvas = window.bootstrap.Offcanvas.getInstance(document.getElementById('cartOffcanvas'));
+                  if (cartOffcanvas) cartOffcanvas.hide();
+
+                  const modal = window.bootstrap.Modal.getOrCreateInstance(modalEl);
+                  modal.show();
+                }
+                return;
+              }
 
               // Check if Bootstrap is loaded
               if (!window.bootstrap) {
