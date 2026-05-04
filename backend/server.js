@@ -14,8 +14,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'nivorgo_super_secret_key_2026';
 
 // Initialize Razorpay
 const razorpay = new Razorpay({
-    key_id: process.env.RAZORPAY_KEY_ID || 'rzp_test_dummykeyid123',
-    key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummysecret1234567890',
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
 // --- MIDDLEWARE ---
@@ -252,8 +252,9 @@ app.post('/place-order', authenticateToken, async (req, res) => {
 app.post('/create-razorpay-order', authenticateToken, async (req, res) => {
     try {
         const { total } = req.body;
+        console.log("Creating Razorpay order for total:", total);
         const options = {
-            amount: total * 100, // amount in paise
+            amount: Math.round(total * 100), // amount in paise, ensure integer
             currency: 'INR',
             receipt: `receipt_order_${Date.now()}`
         };
@@ -261,8 +262,8 @@ app.post('/create-razorpay-order', authenticateToken, async (req, res) => {
         const order = await razorpay.orders.create(options);
         res.json(order);
     } catch (err) {
-        console.error("Razorpay order error:", err);
-        res.status(500).json({ message: "Failed to create Razorpay order" });
+        console.error("Razorpay order error details:", err);
+        res.status(500).json({ message: "Failed to create Razorpay order", error: err.message });
     }
 });
 
@@ -280,7 +281,7 @@ app.post('/verify-payment', authenticateToken, async (req, res) => {
 
         const sign = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSign = crypto
-            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET || 'dummysecret1234567890')
+            .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
             .update(sign.toString())
             .digest("hex");
 
@@ -359,7 +360,7 @@ app.get('/api/admin/orders', async (req, res) => {
         let filter = {};
 
         if (type === 'active') {
-            filter = { status: 'Pending' };
+            filter = { status: { $in: ['Pending', 'Paid'] } };
         } else if (type === 'history') {
             filter = { status: 'Completed' };
         }
@@ -379,8 +380,8 @@ app.patch('/api/admin/orders/:id', async (req, res) => {
 
 app.post('/api/admin/orders/clear-all', async (req, res) => {
     try {
-        // Mark all 'Pending' orders as 'Completed' (Move to History)
-        await Order.updateMany({ status: 'Pending' }, { $set: { status: 'Completed' } });
+        // Mark all 'Pending' and 'Paid' orders as 'Completed' (Move to History)
+        await Order.updateMany({ status: { $in: ['Pending', 'Paid'] } }, { $set: { status: 'Completed' } });
         res.json({ message: "All active orders moved to history" });
     } catch (err) { res.status(500).json({ message: "Clear all failed" }); }
 });

@@ -375,7 +375,7 @@ function MainApp() {
       });
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_dummykeyid123', // Enter the Key ID generated from the Dashboard
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Nivorgo Ayurveda",
@@ -420,8 +420,8 @@ function MainApp() {
       rzp.open();
 
     } catch (err) {
-      console.error(err);
-      alert("Failed to initiate payment.");
+      console.error("Payment initiation error:", err.response?.data || err.message);
+      alert("Failed to initiate payment: " + (err.response?.data?.message || err.message));
     }
     setProcessing(false);
   };
