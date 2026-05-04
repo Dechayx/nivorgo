@@ -375,7 +375,7 @@ function MainApp() {
       });
 
       const options = {
-        key: import.meta.env.VITE_RAZORPAY_KEY_ID, // Enter the Key ID generated from the Dashboard
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_SlK04YLk8g7lO2', // Enter the Key ID generated from the Dashboard
         amount: orderData.amount,
         currency: orderData.currency,
         name: "Nivorgo Ayurveda",
