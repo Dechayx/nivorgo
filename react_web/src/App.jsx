@@ -439,8 +439,8 @@ function MainApp() {
   };
   const applyDiscount = () => {
     const discounts = {
-      NIVORGO10: 0.10,
-      SPRING20: 0.20,
+      NIVORGODec10: 0.10,
+      SPRING12320: 0.12,
     };
     const code = discountCode.trim().toUpperCase();
     if (discounts[code]) {

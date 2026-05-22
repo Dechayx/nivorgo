@@ -44,7 +44,7 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
             <section className="promo-section py-5" style={{ backgroundColor: '#1C2820', color: '#fff' }}>
                 <div className="container py-4 text-center">
                     <span className="category-tag text-light opacity-75 mb-3" style={{ letterSpacing: '5px' }}>Seasonal Wellness</span>
-                    <h2 className="display-4 font-serif mb-4">Celebrate Your Ritual<br />with Up to 20% Off</h2>
+                    <h2 className="display-4 font-serif mb-4">Celebrate Your Ritual<br />with Up to 5% Off</h2>
                     <p className="lead mb-5 opacity-75">Restore your natural balance with our handcrafted therapy oils.<br />Limited quantities available for this harvest.</p>
                     <a href="#products" className="btn btn-outline-light px-5 py-3" style={{ borderRadius: '0', letterSpacing: '2px' }}>SHOP THE SALE</a>
                 </div>
