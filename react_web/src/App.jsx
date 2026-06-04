@@ -17,6 +17,7 @@ import Profile from './pages/Profile';
 import Admin from './pages/Admin';
 import AboutUs from './pages/AboutUs';
 import Ayurveda from './pages/Ayurveda';
+import SingleBlog from './pages/SingleBlog';
 import Product from './pages/product';
 import MoreInfo from './pages/moreinfo';
 import { catalogProducts } from './data/catalogData';
@@ -97,7 +98,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
             <Link className="nav-link px-3" to="/" onClick={() => setIsNavOpen(false)}>Home</Link>
             <Link className="nav-link px-3" to="/about" onClick={() => setIsNavOpen(false)}>About</Link>
             <Link className="nav-link px-3" to="/products" onClick={() => setIsNavOpen(false)}>Products</Link>
-            <Link className="nav-link px-3" to="/why-ayurveda" onClick={() => setIsNavOpen(false)}>Why Ayurveda</Link>
+            <Link className="nav-link px-3" to="/why-ayurveda" onClick={() => setIsNavOpen(false)}>Blogs</Link>
             <a className="nav-link px-3" href="/#contact" onClick={() => setIsNavOpen(false)}>Contact</a>
           </div>
         </div>
@@ -167,12 +168,66 @@ const Footer = ({ contactData, setContactData, handleContactSubmit }) => (
   </footer>
 );
 
+// --- PREDEFINED CHATBOT RESPONSES ---
+const botReplies = {
+  hairfall: "For hair loss and activating new growth, we recommend our **Keshyadharni Therapy Oil**. It contains 24 selected herbs like Bhringraj, Amla, and Brahmi that nourish the hair root and activate dormant follicles. Apply it generously to the scalp, massage, and leave it on overnight.",
+  volume: "Thinning hair caused by styling damage or stress can be treated with **Shirodhara Volumizing Oil**. Rich in onion seeds and rice water extracts, it strengthens hair shafts and adds visual density. Use every alternate day for 45 days for optimal volumizing effects.",
+  dandruff: "If you have dandruff or scalp itching, we recommend **Pratidarunaka Therapy Oil**. Formulated with Neem, Lemon Peel, and Tea Tree, it contains powerful botanical antifungals. Apply it to the scalp 40 minutes before washing, then rinse with warm water.",
+  greying: "Premature greying is a Pitta (heat) imbalance. **PratiPalitya Therapy Oil** utilizes cooling herbs like Indigo, Henna, and Ratanjot to restore natural pigment and protect follicles from UV damage. Best used as a nightly leave-in treatment.",
+  general: "Hello! I am your Nivorgo Ayurvedic Consultant. How can I help you choose the right therapy oil today? You can select one of the popular topics below or describe your concern."
+};
+
 // --- MAIN APP ---
 
 function MainApp() {
   const location = useLocation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+
+  // Chatbot State
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    { sender: 'bot', text: botReplies.general }
+  ]);
+  const [chatInput, setChatInput] = useState('');
+
+  // Bot Answer Generator
+  const handleChatQuestion = (topic, label) => {
+    // Add user message
+    const userMsg = { sender: 'user', text: label };
+    setChatMessages((prev) => [...prev, userMsg]);
+
+    // Answer delay simulated
+    setTimeout(() => {
+      const answer = botReplies[topic] || botReplies.general;
+      setChatMessages((prev) => [...prev, { sender: 'bot', text: answer }]);
+    }, 600);
+  };
+
+  // Handle typed chat input
+  const handleSendChatText = (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+
+    const query = chatInput.toLowerCase();
+    const userMsg = { sender: 'user', text: chatInput };
+    setChatMessages((prev) => [...prev, userMsg]);
+    setChatInput('');
+
+    setTimeout(() => {
+      let reply = "I understand your concern. To provide the best help, could you select one of our therapy topics below or consult with our experts at nivorgo@gmail.com?";
+      if (query.includes('fall') || query.includes('growth') || query.includes('grow') || query.includes('loss')) {
+        reply = botReplies.hairfall;
+      } else if (query.includes('thin') || query.includes('volume') || query.includes('density') || query.includes('thick')) {
+        reply = botReplies.volume;
+      } else if (query.includes('dandruff') || query.includes('itch') || query.includes('flak') || query.includes('scalp')) {
+        reply = botReplies.dandruff;
+      } else if (query.includes('grey') || query.includes('white') || query.includes('color') || query.includes('pigment')) {
+        reply = botReplies.greying;
+      }
+      setChatMessages((prev) => [...prev, { sender: 'bot', text: reply }]);
+    }, 600);
+  };
   const [cart, setCart] = useState(() => JSON.parse(localStorage.getItem('nivorgoCart') || '[]'));
   const [user, setUser] = useState(() => {
     const name = localStorage.getItem('userName');
@@ -491,6 +546,7 @@ function MainApp() {
         } />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/why-ayurveda" element={<Ayurveda />} />
+        <Route path="/blog/:id" element={<SingleBlog />} />
         <Route path="/products" element={
           <Product
             products={products}
@@ -802,6 +858,95 @@ function MainApp() {
           </div>
         </div>
       </div>
+
+      {/* Floating Chat Bubble */}
+      {location.pathname !== '/admin-portal' && (
+        <div className="floating-chat-bubble" onClick={() => setIsChatOpen(!isChatOpen)} title="Ayurvedic Consultation Chat">
+          <svg width="26" height="26" fill="white" viewBox="0 0 24 24">
+            <path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z" />
+          </svg>
+        </div>
+      )}
+
+      {/* Chat Widget Box */}
+      {isChatOpen && location.pathname !== '/admin-portal' && (
+        <div className="chat-widget-box animate-fade-in">
+
+          {/* Header */}
+          <div className="chat-widget-header">
+            <div className="d-flex align-items-center gap-2">
+              <span style={{ fontSize: '1.2rem' }}>🌿</span>
+              <div className="lh-sm">
+                <div className="fw-bold" style={{ fontSize: '0.9rem' }}>Nivorgo Assistant</div>
+                <div className="small opacity-75" style={{ fontSize: '0.7rem' }}>Online consultation</div>
+              </div>
+            </div>
+            <button
+              onClick={() => setIsChatOpen(false)}
+              className="btn btn-link text-white p-0 m-0 border-0"
+              style={{ textDecoration: 'none', fontSize: '1.2rem' }}
+            >
+              ✕
+            </button>
+          </div>
+
+          {/* Chat Logs */}
+          <div className="chat-widget-body">
+            {chatMessages.map((msg, index) => (
+              <div key={index} className={`chat-msg ${msg.sender === 'bot' ? 'bot' : 'user'}`}>
+                {msg.text.split('\n').map((para, i) => (
+                  <p key={i} className="mb-2 last-mb-0" dangerouslySetInnerHTML={{ __html: para }} />
+                ))}
+              </div>
+            ))}
+
+            {/* Quick Consultation Suggestions */}
+            <div className="chat-suggestions mt-3">
+              <div className="small text-muted mb-1 fw-bold">Select a concern:</div>
+              <button
+                className="chat-suggest-btn"
+                onClick={() => handleChatQuestion('hairfall', 'I am experiencing hair loss and want growth.')}
+              >
+                🍂 Hair Loss & Thinning
+              </button>
+              <button
+                className="chat-suggest-btn"
+                onClick={() => handleChatQuestion('volume', 'How do I add density and volume?')}
+              >
+                🌿 Rebuilding Hair Density
+              </button>
+              <button
+                className="chat-suggest-btn"
+                onClick={() => handleChatQuestion('dandruff', 'What is the remedy for dry flakiness/dandruff?')}
+              >
+                ❄️ Dandruff & Scalp Relief
+              </button>
+              <button
+                className="chat-suggest-btn"
+                onClick={() => handleChatQuestion('greying', 'How do I control premature greying?')}
+              >
+                🖤 Premature Greying Control
+              </button>
+            </div>
+          </div>
+
+          {/* Footer Input */}
+          <form onSubmit={handleSendChatText} className="chat-widget-footer">
+            <input
+              type="text"
+              className="chat-input"
+              placeholder="Type your scalp concerns..."
+              value={chatInput}
+              onChange={(e) => setChatInput(e.target.value)}
+            />
+            <button type="submit" className="chat-send-btn">
+              <svg width="16" height="16" fill="white" viewBox="0 0 24 24">
+                <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+              </svg>
+            </button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
