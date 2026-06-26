@@ -386,9 +386,66 @@ app.post('/api/admin/orders/clear-all', async (req, res) => {
     } catch (err) { res.status(500).json({ message: "Clear all failed" }); }
 });
 
-// 7. User Update API (Combined above)
+// 8. Dynamic sitemap.xml
+app.get('/sitemap.xml', (req, res) => {
+    const domain = 'https://nivorgo.com';
+    const today = new Date().toISOString().split('T')[0];
+    
+    const productIds = ['keshyadharni', 'shirodhara', 'pratidarunaka', 'pratipalitya', 'keshyapushti'];
+    const blogIds = [
+        'hair-growth-secrets',
+        'science-of-shirodhara',
+        'dosha-imbalances-dandruff',
+        'melanin-pitta-greying',
+        'sourcing-fresh-herbs',
+        'biotin-keratin-night-repair'
+    ];
+    
+    const staticPaths = ['/', '/about', '/why-ayurveda', '/products'];
+    
+    let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+    xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+    
+    // Add static paths
+    staticPaths.forEach(path => {
+        const priority = path === '/' ? '1.0' : '0.6';
+        const changeFreq = path === '/' ? 'daily' : 'weekly';
+        xml += `  <url>\n`;
+        xml += `    <loc>${domain}${path}</loc>\n`;
+        xml += `    <lastmod>${today}</lastmod>\n`;
+        xml += `    <changefreq>${changeFreq}</changefreq>\n`;
+        xml += `    <priority>${priority}</priority>\n`;
+        xml += `  </url>\n`;
+    });
+    
+    // Add product paths
+    productIds.forEach(id => {
+        xml += `  <url>\n`;
+        xml += `    <loc>${domain}/moreinfo/${id}</loc>\n`;
+        xml += `    <lastmod>${today}</lastmod>\n`;
+        xml += `    <changefreq>weekly</changefreq>\n`;
+        xml += `    <priority>0.8</priority>\n`;
+        xml += `  </url>\n`;
+    });
+    
+    // Add blog paths
+    blogIds.forEach(id => {
+        xml += `  <url>\n`;
+        xml += `    <loc>${domain}/blog/${id}</loc>\n`;
+        xml += `    <lastmod>${today}</lastmod>\n`;
+        xml += `    <changefreq>weekly</changefreq>\n`;
+        xml += `    <priority>0.6</priority>\n`;
+        xml += `  </url>\n`;
+    });
+    
+    xml += `</urlset>\n`;
+    
+    res.header('Content-Type', 'application/xml');
+    res.status(200).send(xml);
+});
 
 // Start Server
 app.listen(PORT, () => {
     console.log(`🚀 Nivorgo Backend running on http://localhost:${PORT}`);
 });
+

@@ -3,13 +3,7 @@ import { BrowserRouter, Routes, Route, Link, useNavigate, useLocation } from 're
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import * as bootstrap from 'bootstrap';
 import axios from 'axios';
-
-// Make Bootstrap globally available
-if (typeof window !== 'undefined') {
-  window.bootstrap = bootstrap;
-}
 
 // Import Pages
 import Home from './pages/Home';
@@ -32,7 +26,7 @@ const defaultProducts = catalogProducts.map(p => ({
 
 // --- Sub-Components (Internal for simplicity) ---
 
-const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }) => {
+const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive, isMounted }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
   const location = useLocation();
@@ -61,7 +55,11 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
               <img src="/assets/search.png" alt="Search" className="nav-icon-img" />
             </button>
 
-            {user ? (
+            {!isMounted ? (
+              <button className="btn btn-link text-light p-2" data-bs-toggle="modal" data-bs-target="#authModal" title="Login or Sign Up" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
+                <img src="/assets/user.png" alt="User" className="nav-icon-img" />
+              </button>
+            ) : user ? (
               <div className="d-flex align-items-center gap-3 animate-fade-in d-none d-lg-flex">
                 <Link to="/profile" className="text-light small fw-bold text-decoration-none" style={{ letterSpacing: '1px', color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
                   WELCOME, {user.name.toUpperCase()}
@@ -75,7 +73,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
             )}
 
             {/* Mobile Profile Link (Icon only) */}
-            {user && (
+            {isMounted && user && (
               <Link to="/profile" className="d-lg-none btn btn-link text-light p-2" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
                 <img src="/assets/user.png" alt="User" className="nav-icon-img" />
               </Link>
@@ -83,7 +81,7 @@ const Navbar = ({ user, cartCount, handleLogout, searchActive, setSearchActive }
           </div>
 
           <button className="btn btn-link position-relative text-light p-2" data-bs-toggle="offcanvas" data-bs-target="#cartOffcanvas" style={{ color: isScrolled || location.pathname !== '/' ? '#333 !important' : '' }}>
-            <img src="/assets/carts.png" alt="Cart" className="nav-icon-img" /> <span className="badge rounded-pill bg-danger">{cartCount}</span>
+            <img src="/assets/carts.png" alt="Cart" className="nav-icon-img" /> <span className="badge rounded-pill bg-danger">{isMounted ? cartCount : 0}</span>
           </button>
         </div>
 
@@ -179,7 +177,7 @@ const botReplies = {
 
 // --- MAIN APP ---
 
-function MainApp() {
+export function MainApp() {
   const location = useLocation();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -228,18 +226,12 @@ function MainApp() {
       setChatMessages((prev) => [...prev, { sender: 'bot', text: reply }]);
     }, 600);
   };
-  const [cart, setCart] = useState(() => JSON.parse(localStorage.getItem('nivorgoCart') || '[]'));
-  const [user, setUser] = useState(() => {
-    const name = localStorage.getItem('userName');
-    const email = localStorage.getItem('userEmail');
-    const token = localStorage.getItem('nivorgoToken');
-    // Also try to retrieve address
-    const address = JSON.parse(localStorage.getItem('userAddress') || '{}');
-    return name ? { name, email, token, address } : null;
-  });
+  const [cart, setCart] = useState([]);
+  const [user, setUser] = useState(null);
   const [searchActive, setSearchActive] = useState(false);
   const [authSection, setAuthSection] = useState('login');
-  const [pendingEmail, setPendingEmail] = useState(localStorage.getItem('pendingEmail') || '');
+  const [pendingEmail, setPendingEmail] = useState('');
+  const [isMounted, setIsMounted] = useState(false);
 
   // States for modals
   const [quickViewProduct, setQuickViewProduct] = useState(null);
@@ -258,6 +250,34 @@ function MainApp() {
   useEffect(() => {
     AOS.init({ duration: 1000, easing: 'ease-in-out', once: true });
     fetchProducts();
+
+    // Safely load initial state from localStorage on client side
+    try {
+      const storedCart = localStorage.getItem('nivorgoCart');
+      if (storedCart) {
+        setCart(JSON.parse(storedCart));
+      }
+      const name = localStorage.getItem('userName');
+      const email = localStorage.getItem('userEmail');
+      const token = localStorage.getItem('nivorgoToken');
+      const address = localStorage.getItem('userAddress');
+      if (name && token) {
+        setUser({
+          name,
+          email,
+          token,
+          address: address ? JSON.parse(address) : {}
+        });
+      }
+      const storedPendingEmail = localStorage.getItem('pendingEmail');
+      if (storedPendingEmail) {
+        setPendingEmail(storedPendingEmail);
+      }
+    } catch (e) {
+      console.warn('Failed to load state from localStorage:', e);
+    }
+
+    setIsMounted(true);
   }, []);
 
   // Sync checkout data with user address
@@ -274,8 +294,10 @@ function MainApp() {
   }, [user]);
 
   useEffect(() => {
-    localStorage.setItem('nivorgoCart', JSON.stringify(cart));
-  }, [cart]);
+    if (isMounted) {
+      localStorage.setItem('nivorgoCart', JSON.stringify(cart));
+    }
+  }, [cart, isMounted]);
 
   const fetchProducts = async () => {
     // We prioritize catalog products for now as per user request
@@ -531,6 +553,7 @@ function MainApp() {
           handleLogout={handleLogout}
           searchActive={searchActive}
           setSearchActive={setSearchActive}
+          isMounted={isMounted}
         />
       )}
 
