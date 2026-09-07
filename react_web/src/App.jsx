@@ -247,6 +247,7 @@ export function MainApp() {
   const [discountRate, setDiscountRate] = useState(0);
   const [discountMessage, setDiscountMessage] = useState('');
   const [processing, setProcessing] = useState(false);
+  const [authLoading, setAuthLoading] = useState(false);
 
   useEffect(() => {
     AOS.init({ duration: 1000, easing: 'ease-in-out', once: true });
@@ -354,6 +355,8 @@ export function MainApp() {
   // Auth Handlers
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (authLoading) return;
+    setAuthLoading(true);
     try {
       const res = await axios.post(`${apiBase}/login`, loginData);
       const data = res.data;
@@ -365,43 +368,58 @@ export function MainApp() {
 
       setUser({ name: data.user.name, email: data.user.email, token: data.token, address: data.user.address || {} });
       alert('Login successful!');
-      window.bootstrap.Modal.getInstance(document.getElementById('authModal')).hide();
+      const modalEl = document.getElementById('authModal');
+      if (modalEl && window.bootstrap) {
+        const modal = window.bootstrap.Modal.getInstance(modalEl);
+        if (modal) modal.hide();
+      }
     } catch (err) {
       if (err.response?.status === 401 && err.response?.data?.message?.includes("verify")) {
-        alert("⚠️ Your email is not verified yet. Please enter the OTP.");
+        alert("⚠️ " + (err.response?.data?.message || "Email not verified yet. Please enter OTP."));
         setPendingEmail(loginData.email);
         localStorage.setItem('pendingEmail', loginData.email);
         setAuthSection('otp');
       } else {
         alert("❌ " + (err.response?.data?.message || 'Login failed'));
       }
+    } finally {
+      setAuthLoading(false);
     }
   };
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    if (authLoading) return;
+    setAuthLoading(true);
     try {
-      await axios.post(`${apiBase}/register`, signupData);
+      const res = await axios.post(`${apiBase}/register`, signupData);
       localStorage.setItem('pendingEmail', signupData.email);
       setPendingEmail(signupData.email);
-      alert("✅ OTP Sent! Check your inbox.");
+      alert("✅ " + (res.data?.message || "OTP Sent! Check your inbox."));
       setAuthSection('otp');
     } catch (err) {
       alert("⚠️ " + (err.response?.data?.message || 'Signup failed'));
+    } finally {
+      setAuthLoading(false);
     }
   };
 
   const verifyOTP = async () => {
     if (!pendingEmail) return alert("Session expired. Please register again.");
-    if (otp.length !== 6) return alert("Please enter a 6-digit code.");
+    if (otp.trim().length !== 6) return alert("Please enter a valid 6-digit code.");
+    if (authLoading) return;
+    setAuthLoading(true);
     try {
-      await axios.post(`${apiBase}/verify-otp`, { email: pendingEmail, otp });
-      alert("🎉 Email Verified! Please log in.");
+      const res = await axios.post(`${apiBase}/verify-otp`, { email: pendingEmail, otp: otp.trim() });
+      alert("🎉 " + (res.data?.message || "Email Verified! Please log in."));
       localStorage.removeItem('pendingEmail');
       setPendingEmail('');
+      setOtp('');
       setAuthSection('login');
     } catch (err) {
-      alert("❌ Verification failed.");
+      alert("❌ " + (err.response?.data?.message || "Verification failed."));
+    } finally {
+      setAuthLoading(false);
     }
   };
 
@@ -892,7 +910,9 @@ export function MainApp() {
                         value={loginData.password} onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                       />
                     </div>
-                    <button type="submit" className="btn btn-success w-100 py-2">Sign In</button>
+                    <button type="submit" className="btn btn-success w-100 py-2" disabled={authLoading}>
+                      {authLoading ? 'Signing In...' : 'Sign In'}
+                    </button>
                   </form>
                   <p className="text-center mt-4 small text-muted">New to Nivorgo? <a href="#" onClick={(e) => { e.preventDefault(); setAuthSection('signup'); }} className="text-success fw-bold">Create Account</a></p>
                 </div>
@@ -923,7 +943,9 @@ export function MainApp() {
                         value={signupData.password} onChange={(e) => setSignupData({ ...signupData, password: e.target.value })}
                       />
                     </div>
-                    <button type="submit" className="btn btn-success w-100 py-2">Register</button>
+                    <button type="submit" className="btn btn-success w-100 py-2" disabled={authLoading}>
+                      {authLoading ? 'Sending OTP...' : 'Register'}
+                    </button>
                   </form>
                   <p className="text-center mt-4 small text-muted">Already have an account? <a href="#" onClick={(e) => { e.preventDefault(); setAuthSection('login'); }} className="text-success fw-bold">Sign In</a></p>
                 </div>
@@ -932,14 +954,16 @@ export function MainApp() {
               {authSection === 'otp' && (
                 <div id="otp-section animate-fade-in">
                   <h3 className="font-serif text-center mb-2">Verify Email</h3>
-                  <p className="text-center text-muted small mb-4">We've sent a 6-digit code to your email.</p>
+                  <p className="text-center text-muted small mb-4">We've sent a 6-digit code to <strong>{pendingEmail}</strong>.</p>
                   <div className="mb-4">
                     <input
                       type="text" className="form-control premium-input text-center fw-bold" placeholder="000000" maxLength="6" style={{ letterSpacing: '10px', fontSize: '1.5rem' }}
                       value={otp} onChange={(e) => setOtp(e.target.value)}
                     />
                   </div>
-                  <button onClick={verifyOTP} className="btn btn-success w-100 py-2">Verify & Register</button>
+                  <button onClick={verifyOTP} className="btn btn-success w-100 py-2" disabled={authLoading}>
+                    {authLoading ? 'Verifying...' : 'Verify & Register'}
+                  </button>
                   <p className="text-center mt-4 small text-muted">Incorrect email? <a href="#" onClick={(e) => { e.preventDefault(); setAuthSection('signup'); }} className="text-success">Try Again</a></p>
                 </div>
               )}
