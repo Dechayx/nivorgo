@@ -6,6 +6,7 @@ const MoreInfo = ({ products, addToBag, openQuickView, formatPrice, images }) =>
     const { id } = useParams();
     const product = catalogProducts.find(p => p.id === id);
     const [mainImage, setMainImage] = useState(product?.img || '');
+    const [selectedSize, setSelectedSize] = useState('100ml');
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -21,9 +22,11 @@ const MoreInfo = ({ products, addToBag, openQuickView, formatPrice, images }) =>
         );
     }
 
-
-
-    const discount = Math.round(((product.mrp - product.price) / product.mrp) * 100);
+    const activeSizeObj = product.sizes ? product.sizes.find(s => s.size === selectedSize) : null;
+    const price = activeSizeObj ? activeSizeObj.price : product.price;
+    const mrp = activeSizeObj ? activeSizeObj.mrp : product.mrp;
+    const inventory = activeSizeObj ? activeSizeObj.inventory : null;
+    const discount = Math.round(((mrp - price) / mrp) * 100);
 
     return (
         <div className="more-info-page" style={{ paddingTop: '120px', backgroundColor: '#fff', minHeight: '100vh' }}>
@@ -83,12 +86,38 @@ const MoreInfo = ({ products, addToBag, openQuickView, formatPrice, images }) =>
 
                             <div className="pricing-box mb-4">
                                 <div className="d-flex align-items-baseline gap-3">
-                                    <h1 className="display-6 fw-bold mb-0">{formatPrice(product.price)}</h1>
-                                    <span className="text-muted text-decoration-line-through">{formatPrice(product.mrp)}</span>
+                                    <h1 className="display-6 fw-bold mb-0">{formatPrice(price)}</h1>
+                                    <span className="text-muted text-decoration-line-through">{formatPrice(mrp)}</span>
                                     <span className="text-success fw-bold">({discount}% OFF)</span>
                                 </div>
                                 <p className="text-muted small mt-1">Inclusive of all taxes & Courier</p>
                             </div>
+
+                            {/* Dropdown Menu for sizes */}
+                            {product.sizes && (
+                                <div className="mb-4">
+                                    <label className="form-label small fw-bold text-uppercase" style={{ letterSpacing: '1px' }}>Size Selection:</label>
+                                    <select 
+                                        className="form-select premium-select mb-2" 
+                                        value={selectedSize} 
+                                        onChange={(e) => setSelectedSize(e.target.value)}
+                                        style={{ borderRadius: '0', border: '1px solid #ccc', padding: '12px' }}
+                                    >
+                                        {product.sizes.map((s, idx) => (
+                                            <option key={idx} value={s.size}>{s.size}</option>
+                                        ))}
+                                    </select>
+                                    {inventory !== null && (
+                                        <div className="small">
+                                            {inventory > 0 ? (
+                                                <span className="text-success">🍃 In Stock: <strong>{inventory}</strong> items available</span>
+                                            ) : (
+                                                <span className="text-danger">Out of Stock</span>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
 
                             <div className="benefits-highlight p-3 mb-4 rounded" style={{ backgroundColor: '#F0F4EF' }}>
                                 <h6 className="fw-bold mb-3 small text-uppercase">Highlights</h6>
@@ -103,15 +132,21 @@ const MoreInfo = ({ products, addToBag, openQuickView, formatPrice, images }) =>
                                 <button
                                     className="btn btn-outline-dark flex-grow-1 py-3 fw-bold"
                                     style={{ borderRadius: '0' }}
-                                    onClick={() => addToBag(product)}
-                                >ADD TO BAG</button>
+                                    onClick={() => addToBag(product, selectedSize)}
+                                    disabled={inventory !== null && inventory === 0}
+                                >
+                                    {inventory !== null && inventory === 0 ? 'OUT OF STOCK' : 'ADD TO BAG'}
+                                </button>
                                 <button
                                     className="btn btn-success flex-grow-1 py-3 fw-bold"
                                     style={{ borderRadius: '0', backgroundColor: '#3A4B36' }}
                                     data-bs-toggle="offcanvas"
                                     data-bs-target="#cartOffcanvas"
-                                    onClick={() => addToBag(product)}
-                                >BUY NOW</button>
+                                    onClick={() => addToBag(product, selectedSize)}
+                                    disabled={inventory !== null && inventory === 0}
+                                >
+                                    {inventory !== null && inventory === 0 ? 'OUT OF STOCK' : 'BUY NOW'}
+                                </button>
                             </div>
                         </div>
                     </div>

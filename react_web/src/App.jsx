@@ -14,7 +14,7 @@ import Ayurveda from './pages/Ayurveda';
 import SingleBlog from './pages/SingleBlog';
 import Product from './pages/product';
 import MoreInfo from './pages/moreinfo';
-import { catalogProducts } from './data/catalogData';
+import { catalogProducts, comboProducts } from './data/catalogData';
 
 const apiBase = import.meta.env.VITE_API_BASE_URL || 'https://api.nivorgo.com';
 const images = ['/assets/1.webp', '/assets/2.webp', '/assets/3.webp', '/assets/4.webp', '/assets/5.webp'];
@@ -235,6 +235,7 @@ export function MainApp() {
 
   // States for modals
   const [quickViewProduct, setQuickViewProduct] = useState(null);
+  const [quickViewSize, setQuickViewSize] = useState('100ml');
 
   // Forms
   const [loginData, setLoginData] = useState({ email: '', password: '' });
@@ -319,8 +320,17 @@ export function MainApp() {
     return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(price);
   };
 
-  const addToBag = (product) => {
-    const newItem = { name: product.title || product.name, price: product.price };
+  const addToBag = (product, selectedSize = '100ml') => {
+    let price = product.price;
+    let name = product.title || product.name;
+    if (product.sizes) {
+      const sizeObj = product.sizes.find(s => s.size === selectedSize);
+      if (sizeObj) {
+        price = sizeObj.price;
+        name = `${name} (${selectedSize})`;
+      }
+    }
+    const newItem = { name, price };
     setCart([...cart, newItem]);
     const cartEl = document.getElementById('cartOffcanvas');
     if (cartEl) {
@@ -516,20 +526,22 @@ export function MainApp() {
   };
   const applyDiscount = () => {
     const discounts = {
-      NIVORGODec10: 0.10,
+      KOMAL10: 0.10,
+      NIVORGODEC10: 0.10,
       SPRING12320: 0.12,
     };
     const code = discountCode.trim().toUpperCase();
     if (discounts[code]) {
       setDiscountRate(discounts[code]);
-      setDiscountMessage(`✅ ${code} applied – ${discounts[code] * 100}% off`);
+      setDiscountMessage(`✅ ${code} applied – ${discounts[code] * 100}% extra off!`);
     } else {
       setDiscountRate(0);
-      setDiscountMessage('❌ Invalid or expired code');
+      setDiscountMessage('❌ Invalid or expired promo code');
     }
   };
   const openQuickView = (product, img) => {
     setQuickViewProduct({ ...product, img });
+    setQuickViewSize('100ml');
 
     // Use setTimeout to ensure React has updated the state and DOM
     setTimeout(() => {
@@ -561,6 +573,7 @@ export function MainApp() {
         <Route path="/" element={
           <Home
             products={products}
+            comboProducts={comboProducts}
             addToBag={addToBag}
             openQuickView={openQuickView}
             formatPrice={formatPrice}
@@ -573,6 +586,7 @@ export function MainApp() {
         <Route path="/products" element={
           <Product
             products={products}
+            comboProducts={comboProducts}
             addToBag={addToBag}
             openQuickView={openQuickView}
             formatPrice={formatPrice}
@@ -677,49 +691,88 @@ export function MainApp() {
           <div className="modal-content border-0 shadow-lg" style={{ backgroundColor: '#F9F7F2' }}>
             <div className="modal-body p-0">
               <button type="button" className="btn-close position-absolute top-0 end-0 m-3 z-3" data-bs-dismiss="modal" aria-label="Close"></button>
-              {quickViewProduct && (
-                <div className="row g-0">
-                  <div className="col-md-6">
-                    <div className="qv-image-container h-100" style={{ background: '#EBE8E2' }}>
-                      <img src={quickViewProduct.img} className="img-fluid w-100 h-100" style={{ objectFit: 'cover', minHeight: '450px' }} alt="Product" />
+              {quickViewProduct && (() => {
+                const activeSizeObj = quickViewProduct.sizes ? quickViewProduct.sizes.find(s => s.size === quickViewSize) : null;
+                const displayedPrice = activeSizeObj ? activeSizeObj.price : quickViewProduct.price;
+                const displayedMrp = activeSizeObj ? activeSizeObj.mrp : quickViewProduct.mrp;
+                const displayedInventory = activeSizeObj ? activeSizeObj.inventory : null;
+                const isCombo = quickViewProduct.products !== undefined;
+                return (
+                  <div className="row g-0">
+                    <div className="col-md-6">
+                      <div className="qv-image-container h-100" style={{ background: '#EBE8E2' }}>
+                        <img src={quickViewProduct.img} className="img-fluid w-100 h-100" style={{ objectFit: 'cover', minHeight: '450px' }} alt="Product" />
+                      </div>
+                    </div>
+                    <div className="col-md-6 p-4 p-lg-5 d-flex flex-column justify-content-center">
+                      <span className="category-tag mb-2">AUTHENTIC AYURVEDA</span>
+                      <h2 className="font-serif mb-2" style={{ fontSize: '2rem' }}>{quickViewProduct.name}</h2>
+                      <div className="d-flex align-items-baseline gap-2 mb-4">
+                        <h4 className="price-tag mb-0">{formatPrice(displayedPrice)}</h4>
+                        {!isCombo && displayedMrp && displayedMrp !== displayedPrice && (
+                          <span className="text-muted text-decoration-line-through small">{formatPrice(displayedMrp)}</span>
+                        )}
+                      </div>
+                      
+                      {quickViewProduct.sizes && (
+                        <div className="mb-4">
+                          <label className="form-label small fw-bold text-uppercase" style={{ letterSpacing: '1px' }}>Size Selection:</label>
+                          <select 
+                            className="form-select premium-select mb-2" 
+                            value={quickViewSize} 
+                            onChange={(e) => setQuickViewSize(e.target.value)}
+                            style={{ borderRadius: '0', border: '1px solid #ccc', padding: '10px' }}
+                          >
+                            {quickViewProduct.sizes.map((s, idx) => (
+                              <option key={idx} value={s.size}>{s.size}</option>
+                            ))}
+                          </select>
+                          {displayedInventory !== null && (
+                            <div className="mt-1 small">
+                              {displayedInventory > 0 ? (
+                                <span className="text-success">🍃 In Stock: <strong>{displayedInventory}</strong> items available</span>
+                              ) : (
+                                <span className="text-danger">Out of Stock</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      <p className="text-muted mb-4" style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{quickViewProduct.desc || 'Pure Ayurvedic Formulation.'}</p>
+                      <div className="benefits-wrapper mb-5">
+                        <h6 className="small fw-bold text-uppercase mb-3" style={{ letterSpacing: '1px' }}>Key Benefits:</h6>
+                        <ul className="list-unstyled small">
+                          {(quickViewProduct.benefits || []).map((b, idx) => (
+                            <li key={idx} className="mb-2">✨ {b}</li>
+                          ))}
+                        </ul>
+                      </div>
+                      <button
+                        className="btn btn-success w-100 py-3 text-uppercase fw-bold mb-3"
+                        style={{ letterSpacing: '2px', borderRadius: '0' }}
+                        onClick={() => {
+                          addToBag(quickViewProduct, quickViewSize);
+                          window.bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();
+                        }}
+                        disabled={displayedInventory !== null && displayedInventory === 0}
+                      >
+                        {displayedInventory !== null && displayedInventory === 0 ? 'Out of Stock' : 'Add to Collection'}
+                      </button>
+                      <Link
+                        to={`/moreinfo/${quickViewProduct.id}`}
+                        className="btn btn-outline-success w-100 py-2 text-uppercase fw-bold"
+                        style={{ letterSpacing: '1px', borderRadius: '0', fontSize: '0.8rem' }}
+                        onClick={() => {
+                          window.bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();
+                        }}
+                      >
+                        View Full Details
+                      </Link>
                     </div>
                   </div>
-                  <div className="col-md-6 p-4 p-lg-5 d-flex flex-column justify-content-center">
-                    <span className="category-tag mb-2">AUTHENTIC AYURVEDA</span>
-                    <h2 className="font-serif mb-2" style={{ fontSize: '2rem' }}>{quickViewProduct.name}</h2>
-                    <h4 className="price-tag mb-4">{formatPrice(quickViewProduct.price)}</h4>
-                    <p className="text-muted mb-4" style={{ fontSize: '0.95rem', lineHeight: '1.6' }}>{quickViewProduct.desc || 'Pure Ayurvedic Formulation.'}</p>
-                    <div className="benefits-wrapper mb-5">
-                      <h6 className="small fw-bold text-uppercase mb-3" style={{ letterSpacing: '1px' }}>Key Benefits:</h6>
-                      <ul className="list-unstyled small">
-                        {(quickViewProduct.benefits || []).map((b, idx) => (
-                          <li key={idx} className="mb-2">✨ {b}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <button
-                      className="btn btn-success w-100 py-3 text-uppercase fw-bold mb-3"
-                      style={{ letterSpacing: '2px', borderRadius: '0' }}
-                      onClick={() => {
-                        addToBag(quickViewProduct);
-                        window.bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();
-                      }}
-                    >
-                      Add to Collection
-                    </button>
-                    <Link
-                      to={`/moreinfo/${quickViewProduct.id}`}
-                      className="btn btn-outline-success w-100 py-2 text-uppercase fw-bold"
-                      style={{ letterSpacing: '1px', borderRadius: '0', fontSize: '0.8rem' }}
-                      onClick={() => {
-                        window.bootstrap.Modal.getInstance(document.getElementById('quickViewModal')).hide();
-                      }}
-                    >
-                      View Full Details
-                    </Link>
-                  </div>
-                </div>
-              )}
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -761,14 +814,20 @@ export function MainApp() {
                 />
               </div>
               <div className="mb-4">
-                <label className="form-label">Discount Code</label>
+                <label className="form-label">Discount / Promo Code</label>
                 <div className="input-group">
                   <input
                     type="text"
                     className="form-control premium-input border-end-0"
-                    placeholder="Enter code (e.g. NIVORGO10)"
+                    placeholder="Enter promo code (e.g. KOMAL10)"
                     value={discountCode}
                     onChange={(e) => setDiscountCode(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        applyDiscount();
+                      }
+                    }}
                   />
                   <button
                     className="btn btn-outline-dark"
@@ -779,7 +838,14 @@ export function MainApp() {
                     APPLY
                   </button>
                 </div>
-                {discountMessage && <div className="mt-2">{discountMessage}</div>}
+                <div className="d-flex align-items-center justify-content-between mt-1">
+                  <small className="text-muted">Available promo code: <button type="button" className="btn btn-link btn-sm p-0 text-success text-decoration-none fw-bold" onClick={() => { setDiscountCode('KOMAL10'); }}>KOMAL10</button> for 10% off</small>
+                </div>
+                {discountMessage && (
+                  <div className={`small mt-2 ${discountRate > 0 ? 'text-success fw-bold' : 'text-danger'}`}>
+                    {discountMessage}
+                  </div>
+                )}
               </div>
               <div className="d-flex justify-content-between mb-2">
                 <span className="text-muted">Subtotal:</span>

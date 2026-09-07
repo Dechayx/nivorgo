@@ -27,8 +27,8 @@ app.use((req, res, next) => {
 // Define allowed origins (e.g., your frontend URL)
 const corsOptions = {
     origin: function (origin, callback) {
-        // Allow localhost, vercel.app subdomains, and the main domain nivorgo.com
-        if (!origin || origin.includes('localhost') || origin.includes('vercel.app') || origin.includes('nivorgo.com')) {
+        // Allow localhost, 127.0.0.1, vercel.app subdomains, and the main domain nivorgo.com
+        if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('vercel.app') || origin.includes('nivorgo.com')) {
             callback(null, true);
         } else {
             callback(new Error('Not allowed by CORS'));
@@ -66,7 +66,8 @@ const UserSchema = new mongoose.Schema({
             default: "",
             validate: {
                 validator: function (v) {
-                    return /^\d{10}$/.test(v) || v === "";
+                    if (!v || v === "") return true;
+                    return /^\d{10}$/.test(v.trim());
                 },
                 message: props => `${props.value} is not a valid 10-digit phone number!`
             }
@@ -86,7 +87,7 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 }));
 
 // --- EMAIL CONFIGURATION (Resend) ---
-const resend = new Resend(process.env.RESEND_API_KEY || 're_Ydrste1Y_DdpXWuavNWBA7SV71bq4pmqA');
+const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM_EMAIL = 'Nivorgo Ayurveda <no-reply@nivorgo.com>';
 
 // --- ROUTES ---
@@ -113,7 +114,10 @@ app.get('/test-email', async (req, res) => {
 app.post('/register', async (req, res) => {
     try {
         let { name, email, password } = req.body;
-        email = email.toLowerCase();
+        if (!name || !email || !password) {
+            return res.status(400).json({ message: "Name, email and password are required." });
+        }
+        email = email.toLowerCase().trim();
         const existingVerifiedUser = await User.findOne({ email, isVerified: true });
         if (existingVerifiedUser) return res.status(400).json({ message: "Email already registered." });
 
@@ -152,9 +156,11 @@ app.post('/register', async (req, res) => {
 
 app.post('/verify-otp', async (req, res) => {
     try {
-        const { email, otp } = req.body;
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (user && user.otp === otp) {
+        let { email, otp } = req.body;
+        if (!email || !otp) return res.status(400).json({ message: "Email and OTP are required." });
+        email = email.toLowerCase().trim();
+        const user = await User.findOne({ email });
+        if (user && user.otp && user.otp.trim() === otp.toString().trim()) {
             user.isVerified = true;
             user.otp = undefined;
             await user.save();
@@ -165,16 +171,19 @@ app.post('/verify-otp', async (req, res) => {
 
 app.post('/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await User.findOne({ email: email.toLowerCase() });
-        if (!user || !user.isVerified) return res.status(401).json({ message: "User not verified." });
+        let { email, password } = req.body;
+        if (!email || !password) return res.status(400).json({ message: "Email and password are required." });
+        email = email.toLowerCase().trim();
+        const user = await User.findOne({ email });
+        if (!user) return res.status(400).json({ message: "User not found. Please register first." });
+        if (!user.isVerified) return res.status(401).json({ message: "User not verified. Please verify your OTP." });
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) return res.status(400).json({ message: "Incorrect password." });
 
         const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: '24h' });
         res.json({ token, user: { name: user.name, email: user.email, address: user.address, cart: user.cart } });
-    } catch (err) { res.status(500).json({ message: "Login error." }); }
+    } catch (err) { res.status(500).json({ message: "Login error: " + err.message }); }
 });
 
 // --- AUTH MIDDLEWARE ---
@@ -252,9 +261,12 @@ app.post('/place-order', authenticateToken, async (req, res) => {
 app.post('/create-razorpay-order', authenticateToken, async (req, res) => {
     try {
         const { total } = req.body;
+        if (!total || isNaN(total) || Number(total) <= 0) {
+            return res.status(400).json({ message: "Invalid order total amount." });
+        }
         console.log("Creating Razorpay order for total:", total);
         const options = {
-            amount: Math.round(total * 100), // amount in paise, ensure integer
+            amount: Math.round(Number(total) * 100), // amount in paise, ensure integer
             currency: 'INR',
             receipt: `receipt_order_${Date.now()}`
         };
@@ -337,6 +349,9 @@ app.put('/api/user/update', authenticateToken, async (req, res) => {
 // 5. Contact
 app.post('/contact', async (req, res) => {
     const { name, email, message } = req.body;
+    if (!name || !email || !message) {
+        return res.status(400).json({ message: "Name, email, and message are required." });
+    }
     try {
         const { data, error } = await resend.emails.send({
             from: FROM_EMAIL,

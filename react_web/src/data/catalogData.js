@@ -7,6 +7,10 @@ export const catalogProducts = [
         tagline: 'Ayurvedic Therapy Oil for Hair Growth',
         price: 1784.1,
         mrp: 1878,
+        sizes: [
+            { size: '100ml', price: 1784.1, mrp: 1878, inventory: 15 },
+            { size: '30ml', price: 629, mrp: 679, inventory: 20 }
+        ],
         rating: 4.9,
         reviews: 42,
         desc: 'A powerful formulation rooted in ancient wisdom, enriched with 20 natural herbs to address hair loss core causes.',
@@ -33,6 +37,10 @@ export const catalogProducts = [
         tagline: 'Ayurvedic Therapy Oil for Hair Volumizing',
         price: 1801.2,
         mrp: 1896,
+        sizes: [
+            { size: '100ml', price: 1801.2, mrp: 1896, inventory: 12 },
+            { size: '30ml', price: 639, mrp: 689, inventory: 18 }
+        ],
         rating: 4.8,
         reviews: 98,
         desc: 'A time-tested deep therapeutic treatment to nourish the scalp and strengthen roots.',
@@ -58,6 +66,10 @@ export const catalogProducts = [
         tagline: 'Ayurvedic Therapy Oil for Dandruff & Fungal Relief',
         price: 1728.05,
         mrp: 1819,
+        sizes: [
+            { size: '100ml', price: 1728.05, mrp: 1819, inventory: 25 },
+            { size: '30ml', price: 599, mrp: 649, inventory: 30 }
+        ],
         rating: 4.7,
         reviews: 156,
         desc: 'Specifically designed to target the Ayurvedic root causes of dandruff—Kapha and Vata imbalances.',
@@ -83,6 +95,10 @@ export const catalogProducts = [
         tagline: 'Ayurvedic Therapy Oil for Premature Greying Control',
         price: 1807.85,
         mrp: 1903,
+        sizes: [
+            { size: '100ml', price: 1807.85, mrp: 1903, inventory: 10 },
+            { size: '30ml', price: 639, mrp: 689, inventory: 15 }
+        ],
         rating: 4.9,
         reviews: 87,
         desc: 'Crafted to restore hair\'s natural pigment by stimulating melanin production and balancing Pitta.',
@@ -108,6 +124,10 @@ export const catalogProducts = [
         tagline: 'Ayurvedic Therapy Oil for Overnight Nourishment',
         price: 1767.95,
         mrp: 1861,
+        sizes: [
+            { size: '100ml', price: 1767.95, mrp: 1861, inventory: 8 },
+            { size: '30ml', price: 619, mrp: 669, inventory: 22 }
+        ],
         rating: 5.0,
         reviews: 64,
         desc: 'Intensive nightly treatment with natural keratin and biotin to repair tired or damaged hair structure.',
@@ -126,3 +146,41 @@ export const catalogProducts = [
         usage: 'Apply liberally at night. The high absorption formula works best while the body is at rest.'
     }
 ];
+
+export const comboProducts = [
+    {
+        id: 'growth-density-combo',
+        title: 'Growth & Density Ritual',
+        name: 'Growth & Density Ritual',
+        img: 'combo_growth_density.png',
+        products: ['Keshyadharni', 'Shirodhara'],
+        price: 3190,
+        mrp: 3585,
+        rating: 4.9,
+        reviews: 140,
+        desc: 'Our twin formulation containing Keshyadharni for hair follicle activation and Shirodhara for maximum volumizing density.',
+        benefits: [
+            'Accelerates growth of new follicles',
+            'Improves hair density and thickness',
+            '100% organic, sulfate & paraben-free'
+        ]
+    },
+    {
+        id: 'complete-care-pack',
+        title: 'Complete Ayurvedic Care Bundle',
+        name: 'Complete Ayurvedic Care Bundle',
+        img: 'combo_complete.png',
+        products: ['Keshyadharni', 'Shirodhara', 'Pratidarunaka', 'PratiPalitya', 'Keshyapushti'],
+        price: 7490,
+        mrp: 8900,
+        rating: 5.0,
+        reviews: 215,
+        desc: 'The ultimate 5-oil system targeting growth, volume, dandruff relief, pigment restoration, and overnight nourishment.',
+        benefits: [
+            'Comprehensive treatment for all scalp conditions',
+            'Sourced from ancient Charaka Samhita manuscripts',
+            'Over 20% savings compared to individual purchases'
+        ]
+    }
+];
+

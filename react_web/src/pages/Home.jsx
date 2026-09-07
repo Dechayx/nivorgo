@@ -5,6 +5,7 @@ import { Pagination, Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
+import ComboCard from '../components/ComboCard';
 
 const testimonials = [
   "/assets/testimonials/23.png",
@@ -39,7 +40,7 @@ const renderStars = (rating) => {
 };
 
 
-const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
+const Home = ({ products, comboProducts = [], addToBag, openQuickView, formatPrice, images }) => {
     const [selectedTestimonial, setSelectedTestimonial] = React.useState(null);
     const marqueeRef = React.useRef(null);
 
@@ -149,51 +150,61 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                             }}
                             loop={true}
                         >
-                            {products.map((p, i) => {
+                            {[...products, ...comboProducts].map((p, i) => {
+                                const isCombo = p.products !== undefined;
                                 const imgUrl = p.img ? `/assets/${p.img}` : images[i % images.length];
                                 return (
                                     <SwiperSlide key={i}>
-                                        <div className="product-card">
-                                            <div className="product-image-wrapper">
-                                                {p.mrp && p.price && (
-                                                    <div className="discount-badge-overlay">
-                                                        {Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF
-                                                    </div>
-                                                )}
-                                                <img src={imgUrl} alt={p.name} className="main-img" loading="lazy" />
-                                                <div className="product-actions">
-                                                    <button
-                                                        className="action-btn quick-view-btn"
-                                                        onClick={() => openQuickView(p, imgUrl)}
-                                                    >
-                                                        Quick View
-                                                    </button>
-                                                    <button
-                                                        className="action-btn cart-btn"
-                                                        onClick={() => addToBag(p)}
-                                                    >
-                                                        Add to Cart
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div className="product-info">
-                                                <h3 className="font-serif">
-                                                    <Link to={`/moreinfo/${p.id}`} className="text-decoration-none text-dark">
-                                                        {p.name}
-                                                    </Link>
-                                                </h3>
-                                                <div className="d-flex justify-content-center align-items-center gap-2">
-                                                    {p.mrp && (
-                                                        <>
-                                                            <span className="text-muted text-decoration-line-through" style={{ fontSize: '0.85rem' }}>{formatPrice(p.mrp)}</span>
-                                                            <span className="text-success fw-bold small">({Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF)</span>
-                                                        </>
+                                        {isCombo ? (
+                                            <ComboCard
+                                                combo={p}
+                                                addToBag={addToBag}
+                                                openQuickView={openQuickView}
+                                                formatPrice={formatPrice}
+                                            />
+                                        ) : (
+                                            <div className="product-card">
+                                                <div className="product-image-wrapper">
+                                                    {p.mrp && p.price && (
+                                                        <div className="discount-badge-overlay">
+                                                            {Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF
+                                                        </div>
                                                     )}
-                                                    <p className="price-tag mb-0">{formatPrice(p.price)}</p>
+                                                    <img src={imgUrl} alt={p.name} className="main-img" loading="lazy" />
+                                                    <div className="product-actions">
+                                                        <button
+                                                            className="action-btn quick-view-btn"
+                                                            onClick={() => openQuickView(p, imgUrl)}
+                                                        >
+                                                            Quick View
+                                                        </button>
+                                                        <button
+                                                            className="action-btn cart-btn"
+                                                            onClick={() => addToBag(p)}
+                                                        >
+                                                            Add to Cart
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <p className="product-card-desc">{p.desc}</p>
+                                                <div className="product-info">
+                                                    <h3 className="font-serif">
+                                                        <Link to={`/moreinfo/${p.id}`} className="text-decoration-none text-dark">
+                                                            {p.name}
+                                                        </Link>
+                                                    </h3>
+                                                    <div className="d-flex justify-content-center align-items-center gap-2">
+                                                        {p.mrp && (
+                                                            <>
+                                                                <span className="text-muted text-decoration-line-through" style={{ fontSize: '0.85rem' }}>{formatPrice(p.mrp)}</span>
+                                                                <span className="text-success fw-bold small">({Math.round(((p.mrp - p.price) / p.mrp) * 100)}% OFF)</span>
+                                                            </>
+                                                        )}
+                                                        <p className="price-tag mb-0">{formatPrice(p.price)}</p>
+                                                    </div>
+                                                    <p className="product-card-desc">{p.desc}</p>
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </SwiperSlide>
                                 );
                             })}
@@ -201,6 +212,7 @@ const Home = ({ products, addToBag, openQuickView, formatPrice, images }) => {
                     </div>
                 </div>
             </section>
+
 
             {/* Testimonials Section */}
             <section id="testimonials" className="section-testimonials">

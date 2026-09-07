@@ -1573,3 +1573,186 @@ h6,
     padding: 10px 20px;
   }
 }
+
+/* --- EXCLUSIVE COMBO CARDS --- */
+.combo-card {
+  background: #ffffff;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.combo-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.08);
+}
+
+.combo-image-wrapper {
+  position: relative;
+  overflow: hidden;
+  background: #EBE8E2;
+  padding: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 4/3;
+}
+
+.combo-img {
+  max-width: 100%;
+  max-height: 240px;
+  object-fit: contain;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.combo-card:hover .combo-img {
+  transform: scale(1.06);
+}
+
+.combo-discount-badge {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #B4846C;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  letter-spacing: 1px;
+  z-index: 5;
+}
+
+.combo-actions {
+  position: absolute;
+  bottom: -60px;
+  left: 0;
+  right: 0;
+  display: flex;
+  transition: bottom 0.4s ease;
+  z-index: 10;
+}
+
+.combo-card:hover .combo-actions {
+  bottom: 0;
+}
+
+.combo-action-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.qv-btn {
+  background: #ffffff;
+  color: #111;
+  border-top: 1px solid #eee;
+}
+
+.qv-btn:hover {
+  background: #111;
+  color: #fff;
+}
+
+.bag-btn {
+  background: var(--primary-forest);
+  color: #fff;
+}
+
+.bag-btn:hover {
+  background: #111;
+}
+
+.combo-info {
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.combo-tag {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #B4846C;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.combo-info h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  color: #1a1a1a;
+  letter-spacing: -0.01em;
+}
+
+.included-products {
+  margin-bottom: 15px;
+}
+
+.included-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #666;
+  text-transform: uppercase;
+  margin-right: 5px;
+}
+
+.included-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.product-pill {
+  font-size: 0.7rem;
+  background: rgba(42, 126, 86, 0.08);
+  color: var(--primary-forest);
+  padding: 3px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+.combo-desc {
+  font-size: 0.85rem;
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 15px;
+  flex-grow: 1;
+}
+
+.combo-pricing {
+  display: flex;
+  flex-direction: column;
+}
+
+.combo-mrp {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.combo-price {
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.savings-badge {
+  font-size: 0.75rem;
+  background: #E8D8CE;
+  color: #8C5E48;
+  padding: 4px 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
