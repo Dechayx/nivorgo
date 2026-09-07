@@ -88,7 +88,26 @@ const Order = mongoose.model('Order', new mongoose.Schema({
 
 // --- EMAIL CONFIGURATION (Resend) ---
 const resend = new Resend(process.env.RESEND_API_KEY);
-const FROM_EMAIL = 'Nivorgo Ayurveda <no-reply@nivorgo.com>';
+const PRIMARY_FROM_EMAIL = process.env.FROM_EMAIL || 'Nivorgo Ayurveda <no-reply@nivorgo.com>';
+const FALLBACK_FROM_EMAIL = 'Nivorgo Ayurveda <onboarding@resend.dev>';
+
+const sendEmail = async (emailOptions) => {
+    try {
+        const { data, error } = await resend.emails.send({ ...emailOptions, from: PRIMARY_FROM_EMAIL });
+        if (error) {
+            console.warn("⚠️ Primary email failed, retrying with onboarding@resend.dev:", error.message);
+            const fallbackRes = await resend.emails.send({ ...emailOptions, from: FALLBACK_FROM_EMAIL });
+            if (fallbackRes.error) throw fallbackRes.error;
+            return fallbackRes.data;
+        }
+        return data;
+    } catch (err) {
+        console.warn("⚠️ Exception during primary email send, retrying with onboarding@resend.dev:", err.message);
+        const fallbackRes = await resend.emails.send({ ...emailOptions, from: FALLBACK_FROM_EMAIL });
+        if (fallbackRes.error) throw fallbackRes.error;
+        return fallbackRes.data;
+    }
+};
 
 // --- ROUTES ---
 // 0. Health Check & Test Email
@@ -96,13 +115,11 @@ app.get('/ping', (req, res) => res.send('Nivorgo Backend is LIVE! 🍃'));
 
 app.get('/test-email', async (req, res) => {
     try {
-        const { data, error } = await resend.emails.send({
-            from: FROM_EMAIL,
+        const data = await sendEmail({
             to: 'nivorgo@gmail.com',
             subject: 'Email Test Success! 🚀',
             html: '<strong>Your backend can now send emails via Resend.</strong>'
         });
-        if (error) throw error;
         res.json({ message: "Test email sent successfully!", data });
     } catch (err) {
         console.error("❌ Resend Error:", err);
@@ -130,8 +147,7 @@ app.post('/register', async (req, res) => {
         console.log(`✅ User ${email} saved to DB, sending email...`);
 
         try {
-            const { data, error } = await resend.emails.send({
-                from: FROM_EMAIL,
+            await sendEmail({
                 to: email,
                 subject: 'Verify your Nivorgo Account',
                 html: `<div style="font-family: Arial; padding: 20px; background-color: #f9f9f9; border-radius: 10px;">
@@ -141,12 +157,11 @@ app.post('/register', async (req, res) => {
                         <p>This code will expire shortly.</p>
                       </div>`
             });
-            if (error) throw error;
             console.log(`📧 OTP sent successfully to ${email}`);
             res.status(201).json({ message: "OTP sent!" });
         } catch (emailErr) {
             console.error("❌ Resend Error:", emailErr);
-            res.status(500).json({ message: "Registration successful, but failed to send OTP email. Please check your Resend settings." });
+            res.status(500).json({ message: "Registration created, but failed to deliver OTP email: " + emailErr.message });
         }
     } catch (err) {
         console.error("❌ Registration DB Error:", err);
@@ -353,18 +368,16 @@ app.post('/contact', async (req, res) => {
         return res.status(400).json({ message: "Name, email, and message are required." });
     }
     try {
-        const { data, error } = await resend.emails.send({
-            from: FROM_EMAIL,
+        const data = await sendEmail({
             to: 'nivorgo@gmail.com',
             reply_to: email,
             subject: `🌿 Inquiry from ${name}`,
             html: `<h3>New Message</h3><p><b>From:</b> ${name} (${email})</p><p><b>Message:</b> ${message}</p>`
         });
-        if (error) throw error;
-        res.json({ message: "Sent!" });
+        res.json({ message: "Sent!", data });
     } catch (err) {
         console.error("❌ Resend Contact Error:", err);
-        res.status(500).json({ message: "Failed to send message. Please ensure Resend configuration is correct." });
+        res.status(500).json({ message: "Failed to send message: " + err.message });
     }
 });
 
